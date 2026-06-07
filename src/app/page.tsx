@@ -1,17 +1,30 @@
-import Branches from "@/components/Branches"
-import { siteData } from "@/data/site"
+"use client"
+import Header from "@/components/Header"
+import Hero from "@/components/Hero"
+import StorySection from "@/components/StorySection"
+import ExperienceSection from "@/components/ExperienceSection"
+import GallerySection from "@/components/GallerySection"
+import BranchesSection from "@/components/BranchesSection"
+import ConsultingSection from "@/components/ConsultingSection"
+import AboutSection from "@/components/AboutSection"
+import ContactSection from "@/components/ContactSection"
+import ScrollProgress from "@/components/ScrollProgress"
+import { useLang } from "@/lib/i18n"
 
 export default function Home() {
+  const { lang, isRtl } = useLang()
   return (
-    <main dir="rtl" className="min-h-screen bg-gray-50 font-sans">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 py-6 px-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">{siteData.brand.fa}</h1>
-        <p className="text-sm text-gray-500 mt-1">{siteData.brand.en}</p>
-      </header>
-
-      {/* Branches */}
-      <Branches lang="fa" />
-    </main>
+    <div dir={isRtl ? "rtl" : "ltr"} lang={lang} className="bg-[#080604] text-[#F4E9D8] min-h-screen">
+      <ScrollProgress />
+      <Header />
+      <Hero />
+      <StorySection />
+      <ExperienceSection />
+      <GallerySection />
+      <BranchesSection />
+      <ConsultingSection />
+      <AboutSection />
+      <ContactSection />
+    </div>
   )
 }

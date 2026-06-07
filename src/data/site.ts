@@ -5,16 +5,47 @@ export const siteData = {
     domain: "caffegallery.com",
     manager: {
       fa: "نادر چنپگیزیان",
-      en: "Nader Chenpegizian"
+      en: "Nader Chenpegizian",
     },
-    experienceYears: "30+"
+    experienceYears: "30+",
   },
 
   management: {
     phone: "09122001605",
     phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
     labelFa: "شماره تماس مدیریت",
-    labelEn: "Management Contact"
+    labelEn: "Management Contact",
+  },
+
+  gallery: [
+    {
+      id: "g1",
+      titleFa: "فضای کافه گالری",
+      titleEn: "Cafe Gallery Interior",
+      image: "/images/gallery/gallery-1.jpg",
+      category: "interior",
+    },
+    {
+      id: "g2",
+      titleFa: "آثار هنری",
+      titleEn: "Artwork Display",
+      image: "/images/gallery/gallery-2.jpg",
+      category: "art",
+    },
+    {
+      id: "g3",
+      titleFa: "منوی ویژه",
+      titleEn: "Signature Menu",
+      image: "/images/gallery/gallery-3.jpg",
+      category: "menu",
+    },
+  ],
+
+  contact: {
+    phone: "09122001605",
+    phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
+    instagram: "",
+    whatsapp: "09122001605",
   },
 
   branches: [
@@ -34,12 +65,11 @@ export const siteData = {
       image: "/images/branches/bagh-moze-honar.jpg",
       typeFa: "کافه‌رستوران / کافه‌گالری",
       typeEn: "Cafe Restaurant / Cafe Gallery",
-      featuresFa: ["فضای باغی", "فضای هنری", "مناسب قرار و دورهمی", "مناسب رویداد و مراسم"],
-      featuresEn: ["Garden atmosphere", "Artistic space", "Ideal for gatherings", "Suitable for events"],
-      noteFa: "آدرس دقیق واحد یا ورودی شعبه باید توسط مدیریت تأیید شود.",
-      noteEn: "Exact unit or entrance details should be confirmed by management."
+      featuresFa: ["فضای باغی", "فضای هنری", "مناسب رویداد"],
+      featuresEn: ["Garden atmosphere", "Artistic space", "Suitable for events"],
+      noteFa: "آدرس دقیق واحد باید تأیید شود.",
+      noteEn: "Exact unit address should be confirmed.",
     },
-
     {
       id: "imam-khomeini-airport",
       nameFa: "کافه گالری شعبه فرودگاه امام خمینی (ره)",
@@ -56,12 +86,11 @@ export const siteData = {
       image: "/images/branches/imam-khomeini-airport.jpg",
       typeFa: "کافه‌رستوران فرودگاهی",
       typeEn: "Airport Cafe Restaurant",
-      featuresFa: ["مناسب مسافران", "فضای سریع و کاربردی", "موقعیت فرودگاهی"],
-      featuresEn: ["Traveler-friendly", "Fast service concept", "Airport location"],
-      noteFa: "ترمینال، طبقه یا محدوده دقیق شعبه باید توسط مدیریت تکمیل شود.",
-      noteEn: "Terminal, floor or exact branch location should be completed by management."
+      featuresFa: ["مناسب مسافران", "فضای سریع"],
+      featuresEn: ["Traveler-friendly", "Fast service concept"],
+      noteFa: "ترمینال دقیق باید تکمیل شود.",
+      noteEn: "Exact terminal should be completed.",
     },
-
     {
       id: "enghelab-foodcourt",
       nameFa: "فودکورت مجموعه ورزشی انقلاب",
@@ -78,18 +107,17 @@ export const siteData = {
       image: "/images/branches/enghelab-foodcourt.jpg",
       typeFa: "فودکورت",
       typeEn: "Food Court",
-      featuresFa: ["مناسب ورزشکاران", "مناسب خانواده", "دسترسی در مجموعه ورزشی"],
-      featuresEn: ["Athlete-friendly", "Family-friendly", "Inside sports complex"],
-      noteFa: "موقعیت دقیق فودکورت در مجموعه باید تکمیل شود.",
-      noteEn: "Exact food court location inside the complex should be completed."
+      featuresFa: ["مناسب ورزشکاران", "مناسب خانواده"],
+      featuresEn: ["Athlete-friendly", "Family-friendly"],
+      noteFa: "موقعیت دقیق فودکورت باید تکمیل شود.",
+      noteEn: "Exact food court location should be completed.",
     },
-
     {
       id: "kourosh-mall-foodcourt",
       nameFa: "فودکورت کوروش مال",
       nameEn: "Kourosh Mall Food Court",
-      addressFa: "تهران، بزرگراه شهید ستاری، خیابان پیامبر مرکزی، مجتمع تجاری، فرهنگی و تفریحی کوروش",
-      addressEn: "Tehran, Shahid Sattari Highway, Payambar Markazi Street, Kourosh Commercial, Cultural and Entertainment Complex",
+      addressFa: "تهران، بزرگراه شهید ستاری، خیابان پیامبر مرکزی، مجتمع کوروش",
+      addressEn: "Tehran, Shahid Sattari Highway, Payambar Markazi Street, Kourosh Complex",
       phone: "09122001605",
       phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
       phoneLabelFa: "تماس با مدیریت",
@@ -99,19 +127,18 @@ export const siteData = {
       mapUrl: "",
       image: "/images/branches/kourosh-mall-foodcourt.jpg",
       typeFa: "فودکورت مرکز خرید",
-      typeEn: "Shopping Mall Food Court",
-      featuresFa: ["مرکز خرید", "مناسب خانواده", "دسترسی شهری", "فضای پرتردد"],
-      featuresEn: ["Shopping mall", "Family-friendly", "Urban access", "High-footfall location"],
-      noteFa: "طبقه یا واحد دقیق فودکورت باید توسط مدیریت تکمیل شود.",
-      noteEn: "Exact floor or unit should be completed by management."
+      typeEn: "Mall Food Court",
+      featuresFa: ["مرکز خرید", "مناسب خانواده", "فضای پرتردد"],
+      featuresEn: ["Shopping mall", "Family-friendly", "High traffic location"],
+      noteFa: "طبقه دقیق باید تکمیل شود.",
+      noteEn: "Exact floor should be completed.",
     },
-
     {
       id: "hashemi-nejad-hospital",
       nameFa: "کافه گالری شعبه بیمارستان هاشمی‌نژاد",
       nameEn: "Caffegallery — Hashemi Nejad Hospital Branch",
-      addressFa: "تهران، خیابان ولیعصر، خیابان والی‌نژاد، بین تلاش و کوشیار، بیمارستان هاشمی‌نژاد",
-      addressEn: "Tehran, Valiasr Street, Valinejad Street, between Talash and Kooshyar, Hashemi Nejad Hospital",
+      addressFa: "تهران، خیابان ولیعصر، خیابان والی‌نژاد، بیمارستان هاشمی‌نژاد",
+      addressEn: "Tehran, Valiasr Street, Valinejad Street, Hashemi Nejad Hospital",
       phone: "09122001605",
       phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
       phoneLabelFa: "تماس با مدیریت",
@@ -122,18 +149,17 @@ export const siteData = {
       image: "/images/branches/hashemi-nejad-hospital.jpg",
       typeFa: "کافه بیمارستانی",
       typeEn: "Hospital Cafe",
-      featuresFa: ["مناسب همراهان بیمار", "فضای خدماتی", "دسترسی داخل مرکز درمانی"],
-      featuresEn: ["For visitors and companions", "Service-focused space", "Inside medical center"],
-      noteFa: "طبقه یا محدوده دقیق شعبه داخل بیمارستان باید تکمیل شود.",
-      noteEn: "Exact floor or area inside the hospital should be completed."
+      featuresFa: ["مناسب همراهان بیمار", "داخل مرکز درمانی"],
+      featuresEn: ["Patient companion-friendly", "Inside medical center"],
+      noteFa: "طبقه دقیق باید تکمیل شود.",
+      noteEn: "Exact floor should be completed.",
     },
-
     {
       id: "laleh-hospital",
       nameFa: "کافه گالری شعبه بیمارستان لاله",
       nameEn: "Caffegallery — Laleh Hospital Branch",
-      addressFa: "تهران، شهرک غرب، فاز ۵، خیابان سیمای ایران، نبش خیابان شجریان جنوبی، بیمارستان لاله",
-      addressEn: "Tehran, Shahrak-e Gharb, Phase 5, Simaye Iran Street, corner of South Shajarian Street, Laleh Hospital",
+      addressFa: "تهران، شهرک غرب، فاز ۵، خیابان سیمای ایران، بیمارستان لاله",
+      addressEn: "Tehran, Shahrak Gharb, Phase 5, Simay Iran Street, Laleh Hospital",
       phone: "09122001605",
       phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
       phoneLabelFa: "تماس با مدیریت",
@@ -144,18 +170,17 @@ export const siteData = {
       image: "/images/branches/laleh-hospital.jpg",
       typeFa: "کافه بیمارستانی",
       typeEn: "Hospital Cafe",
-      featuresFa: ["مناسب همراهان بیمار", "فضای خدماتی", "دسترسی داخل مرکز درمانی"],
-      featuresEn: ["For visitors and companions", "Service-focused space", "Inside medical center"],
-      noteFa: "طبقه یا محدوده دقیق شعبه داخل بیمارستان باید تکمیل شود.",
-      noteEn: "Exact floor or area inside the hospital should be completed."
+      featuresFa: ["مناسب همراهان بیمار", "داخل مرکز درمانی"],
+      featuresEn: ["Patient companion-friendly", "Inside medical center"],
+      noteFa: "طبقه دقیق باید تکمیل شود.",
+      noteEn: "Exact floor should be completed.",
     },
-
     {
       id: "kasra-hospital",
       nameFa: "کافه گالری شعبه بیمارستان کسری",
       nameEn: "Caffegallery — Kasra Hospital Branch",
-      addressFa: "تهران، میدان آرژانتین، خیابان الوند، بیمارستان تخصصی و فوق تخصصی کسری",
-      addressEn: "Tehran, Argentina Square, Alvand Street, Kasra Specialty and Subspecialty Hospital",
+      addressFa: "تهران، میدان آرژانتین، خیابان الوند، بیمارستان کسری",
+      addressEn: "Tehran, Argentina Square, Alvand Street, Kasra Hospital",
       phone: "09122001605",
       phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
       phoneLabelFa: "تماس با مدیریت",
@@ -166,18 +191,17 @@ export const siteData = {
       image: "/images/branches/kasra-hospital.jpg",
       typeFa: "کافه بیمارستانی",
       typeEn: "Hospital Cafe",
-      featuresFa: ["مناسب همراهان بیمار", "فضای خدماتی", "دسترسی داخل مرکز درمانی"],
-      featuresEn: ["For visitors and companions", "Service-focused space", "Inside medical center"],
-      noteFa: "طبقه یا محدوده دقیق شعبه داخل بیمارستان باید تکمیل شود.",
-      noteEn: "Exact floor or area inside the hospital should be completed."
+      featuresFa: ["مناسب همراهان بیمار", "داخل مرکز درمانی"],
+      featuresEn: ["Patient companion-friendly", "Inside medical center"],
+      noteFa: "طبقه دقیق باید تکمیل شود.",
+      noteEn: "Exact floor should be completed.",
     },
-
     {
       id: "milad-hospital",
       nameFa: "کافه گالری شعبه بیمارستان میلاد",
       nameEn: "Caffegallery — Milad Hospital Branch",
-      addressFa: "تهران، بزرگراه همت، جنب برج میلاد، بیمارستان تخصصی و فوق تخصصی میلاد",
-      addressEn: "Tehran, Hemmat Highway, next to Milad Tower, Milad Specialty and Subspecialty Hospital",
+      addressFa: "تهران، بزرگراه همت، جنب برج میلاد، بیمارستان میلاد",
+      addressEn: "Tehran, Hemmat Highway, next to Milad Tower, Milad Hospital",
       phone: "09122001605",
       phoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
       phoneLabelFa: "تماس با مدیریت",
@@ -188,12 +212,11 @@ export const siteData = {
       image: "/images/branches/milad-hospital.jpg",
       typeFa: "کافه بیمارستانی",
       typeEn: "Hospital Cafe",
-      featuresFa: ["مناسب همراهان بیمار", "فضای خدماتی", "دسترسی داخل مرکز درمانی"],
-      featuresEn: ["For visitors and companions", "Service-focused space", "Inside medical center"],
-      noteFa: "طبقه یا محدوده دقیق شعبه داخل بیمارستان باید تکمیل شود.",
-      noteEn: "Exact floor or area inside the hospital should be completed."
+      featuresFa: ["مناسب همراهان بیمار", "داخل مرکز درمانی"],
+      featuresEn: ["Patient companion-friendly", "Inside medical center"],
+      noteFa: "طبقه دقیق باید تکمیل شود.",
+      noteEn: "Exact floor should be completed.",
     },
-
     {
       id: "enghelab-cafe-gallery",
       nameFa: "کافه گالری مجموعه ورزشی انقلاب",
@@ -210,20 +233,169 @@ export const siteData = {
       image: "/images/branches/enghelab-cafe-gallery.jpg",
       typeFa: "کافه گالری / کافه‌رستوران",
       typeEn: "Cafe Gallery / Cafe Restaurant",
-      featuresFa: ["فضای ورزشی", "مناسب دورهمی", "مناسب بعد از ورزش", "دسترسی در مجموعه انقلاب"],
-      featuresEn: ["Sports complex atmosphere", "Good for gatherings", "Ideal after sports", "Inside Enghelab Complex"],
-      noteFa: "موقعیت دقیق شعبه در مجموعه باید تکمیل شود.",
-      noteEn: "Exact location inside the complex should be completed."
-    }
+      featuresFa: ["فضای ورزشی", "مناسب دورهمی"],
+      featuresEn: ["Sports atmosphere", "Social gatherings"],
+      noteFa: "موقعیت دقیق باید تکمیل شود.",
+      noteEn: "Exact location should be completed.",
+    },
   ],
 
-  contact: {
-    managementPhone: "09122001605",
-    managementPhoneFa: "۰۹۱۲۲۰۰۱۶۰۵",
-    email: "",
-    instagram: "",
-    whatsapp: "09122001605",
-    addressFa: "تهران",
-    addressEn: "Tehran"
-  }
+  copy: {
+    fa: {
+      hero: {
+        headline: "جایی که هنر و قهوه در هم می‌آمیزند",
+        subtext:
+          "کافه گالری؛ تجربه‌ای فراتر از یک فنجان قهوه. بیش از سه دهه خلق لحظات ماندگار در قلب تهران.",
+        ctaBranches: "مشاهده شعبه‌ها",
+        ctaGallery: "دیدن گالری",
+        scroll: "اسکرول کنید",
+      },
+      story: {
+        badge: "بیش از ۳۰ سال تجربه",
+        headline: "داستانی که با یک فنجان آغاز شد",
+        body: "کافه گالری در دهه شصت با ایده‌ای ساده اما انقلابی متولد شد: ترکیب فضای گرم یک کافه با جادوی هنر. امروز با ۹ شعبه در تهران، مقصدی ماندگار برای هنردوستان، مسافران و خانواده‌های ایرانی هستیم.",
+      },
+      experience: {
+        headline: "تجربه‌ای که تکرار نمی‌شود",
+        subtext: "هر بازدید از کافه گالری داستانی جداگانه است",
+        items: [
+          { title: "قهوه تخصصی", desc: "از بهترین دانه‌های برگزیده جهان" },
+          { title: "فضای هنری", desc: "آثار هنرمندان معاصر ایرانی" },
+          { title: "منوی متنوع", desc: "از صبحانه تا شام، برای هر ذائقه" },
+          { title: "رویداد و مراسم", desc: "مکان ایده‌آل برای گردهمایی‌های خاص" },
+          { title: "موقعیت‌های منحصربه‌فرد", desc: "در باغ موزه، فرودگاه، بیمارستان و مال" },
+        ],
+      },
+      gallery: {
+        headline: "گالری تصاویر",
+        subtext: "نگاهی به فضای کافه گالری",
+        all: "همه",
+        interior: "فضای داخلی",
+        art: "هنر",
+        menu: "منو",
+      },
+      branches: {
+        headline: "شعبه‌های ما",
+        subtext: "کافه گالری در ۹ نقطه از تهران",
+        address: "آدرس",
+        phone: "تماس",
+        hours: "ساعت کاری",
+        call: "تماس",
+        map: "مسیریابی",
+        mapComingSoon: "لینک نقشه به‌زودی اضافه می‌شود",
+      },
+      consulting: {
+        headline: "مشاوره راه‌اندازی کافه",
+        subtext:
+          "با بیش از سه دهه تجربه در صنعت کافه‌داری ایران، آماده‌ایم تا در راه‌اندازی یا بهینه‌سازی کسب‌وکار شما همراهتان باشیم.",
+        cta: "درخواست مشاوره",
+        services: [
+          "طراحی مفهومی و اجرایی کافه",
+          "انتخاب تجهیزات و دکوراسیون",
+          "آموزش باریستا و پرسنل",
+          "طراحی منو و مدیریت هزینه",
+          "استراتژی برندینگ و بازاریابی",
+          "مدیریت تأمین‌کنندگان",
+          "سیستم‌سازی و بهینه‌سازی عملیات",
+        ],
+      },
+      about: {
+        headline: "درباره کافه گالری",
+        body: "کافه گالری توسط نادر چنپگیزیان با هدف خلق فضایی در تلاقی هنر، فرهنگ و زندگی روزمره تأسیس شد. ما باور داریم که یک فنجان قهوه خوب می‌تواند لحظه‌ای را به خاطره تبدیل کند.",
+        manager: "نادر چنپگیزیان",
+        managerTitle: "بنیان‌گذار و مدیر کافه گالری",
+        badge: "بیش از ۳۰ سال",
+        badgeLabel: "تجربه در صنعت",
+      },
+      contact: {
+        headline: "تماس با ما",
+        subtext: "برای کسب اطلاعات بیشتر یا مشاوره با ما در تماس باشید",
+        phone: "تماس تلفنی",
+        instagram: "اینستاگرام",
+        whatsapp: "واتساپ",
+        name: "نام شما",
+        message: "پیام شما",
+        send: "ارسال پیام",
+        instagramPlaceholder: "به‌زودی",
+      },
+    },
+    en: {
+      hero: {
+        headline: "Where Art and Coffee Converge",
+        subtext:
+          "Caffegallery — an experience beyond a cup of coffee. Over three decades of crafting unforgettable moments in the heart of Tehran.",
+        ctaBranches: "View Branches",
+        ctaGallery: "Explore Gallery",
+        scroll: "Scroll down",
+      },
+      story: {
+        badge: "30+ Years of Experience",
+        headline: "A Story That Began with One Cup",
+        body: "Caffegallery was born in the 1980s with a simple yet revolutionary idea: blending the warmth of a café with the magic of art. Today, with 9 branches across Tehran, we are a lasting destination for art lovers, travelers and Iranian families.",
+      },
+      experience: {
+        headline: "An Experience Unlike Any Other",
+        subtext: "Every visit to Caffegallery is a story of its own",
+        items: [
+          { title: "Specialty Coffee", desc: "From the finest selected beans worldwide" },
+          { title: "Artistic Space", desc: "Works by contemporary Iranian artists" },
+          { title: "Diverse Menu", desc: "From breakfast to dinner, for every palate" },
+          { title: "Events & Gatherings", desc: "The ideal venue for special occasions" },
+          { title: "Unique Locations", desc: "Museum garden, airport, hospital and mall" },
+        ],
+      },
+      gallery: {
+        headline: "Gallery",
+        subtext: "A glimpse into the Caffegallery experience",
+        all: "All",
+        interior: "Interior",
+        art: "Art",
+        menu: "Menu",
+      },
+      branches: {
+        headline: "Our Branches",
+        subtext: "Caffegallery across 9 locations in Tehran",
+        address: "Address",
+        phone: "Contact",
+        hours: "Working Hours",
+        call: "Call",
+        map: "Directions",
+        mapComingSoon: "Map link coming soon",
+      },
+      consulting: {
+        headline: "Cafe Setup Consulting",
+        subtext:
+          "With over three decades of experience in Iran's cafe industry, we are ready to guide you in launching or optimizing your business.",
+        cta: "Request Consultation",
+        services: [
+          "Conceptual and operational cafe design",
+          "Equipment and decoration selection",
+          "Barista and staff training",
+          "Menu design and cost management",
+          "Branding and marketing strategy",
+          "Supplier management",
+          "Operations systemization and optimization",
+        ],
+      },
+      about: {
+        headline: "About Caffegallery",
+        body: "Caffegallery was founded by Nader Chenpegizian with the aim of creating a space at the intersection of art, culture and everyday life. We believe that a great cup of coffee can transform a moment into a memory.",
+        manager: "Nader Chenpegizian",
+        managerTitle: "Founder & Manager of Caffegallery",
+        badge: "30+ Years",
+        badgeLabel: "Industry Experience",
+      },
+      contact: {
+        headline: "Contact Us",
+        subtext: "Get in touch for more information or consulting",
+        phone: "Phone",
+        instagram: "Instagram",
+        whatsapp: "WhatsApp",
+        name: "Your Name",
+        message: "Your Message",
+        send: "Send Message",
+        instagramPlaceholder: "Coming soon",
+      },
+    },
+  },
 }
