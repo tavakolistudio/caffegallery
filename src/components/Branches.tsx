@@ -1,3 +1,5 @@
+"use client"
+
 import { siteData } from "@/data/site"
 
 type Branch = (typeof siteData.branches)[number]
