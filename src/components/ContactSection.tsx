@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { Phone, AtSign, MessageCircle, Send } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 
@@ -11,28 +12,59 @@ export default function ContactSection() {
   const [name, setName] = useState("")
   const [message, setMessage] = useState("")
 
-  const sectionRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      if (sectionRef.current) {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: headerRef.current, start: "top 82%", once: true },
+        }
+      )
+
+      if (cardsRef.current) {
         gsap.fromTo(
-          Array.from(sectionRef.current.querySelectorAll("[data-reveal]")),
+          Array.from(cardsRef.current.children),
           { opacity: 0, y: 25 },
           {
             opacity: 1, y: 0,
             stagger: 0.1,
-            duration: 0.7,
+            duration: 0.65,
             ease: "power3.out",
-            scrollTrigger: { trigger: sectionRef.current, start: "top 82%", once: true },
+            scrollTrigger: { trigger: cardsRef.current, start: "top 80%", once: true },
           }
         )
       }
+
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 25 },
+        {
+          opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power3.out",
+          scrollTrigger: { trigger: formRef.current, start: "top 80%", once: true },
+        }
+      )
+
+      gsap.fromTo(
+        footerRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1, duration: 0.7,
+          scrollTrigger: { trigger: footerRef.current, start: "top 90%", once: true },
+        }
+      )
     })
 
     ScrollTrigger.refresh()
+
     return () => ctx.revert()
   }, [])
 
@@ -42,100 +74,120 @@ export default function ContactSection() {
     setMessage("")
   }
 
+  const contactCards = [
+    {
+      icon: Phone,
+      label: copy.phone,
+      value: lang === "fa" ? siteData.contact.phoneFa : siteData.contact.phone,
+      href: `tel:${siteData.contact.phone}`,
+      available: true,
+    },
+    {
+      icon: AtSign,
+      label: copy.instagram,
+      value: siteData.contact.instagram || copy.instagramPlaceholder,
+      href: siteData.contact.instagram
+        ? `https://instagram.com/${siteData.contact.instagram}`
+        : undefined,
+      available: !!siteData.contact.instagram,
+    },
+    {
+      icon: MessageCircle,
+      label: copy.whatsapp,
+      value: lang === "fa" ? siteData.contact.phoneFa : siteData.contact.whatsapp,
+      href: `https://wa.me/${siteData.contact.whatsapp.replace(/^0/, "98")}`,
+      available: true,
+    },
+  ]
+
   return (
     <>
-      {/* Contact section — Linen, no card panels */}
+      {/* Contact section — light */}
       <section
-        ref={sectionRef}
         id="contact"
         dir={isRtl ? "rtl" : "ltr"}
-        className="bg-[#fafffa] px-[50px] py-[120px]"
+        className="relative py-28 px-6 bg-[#fafffa] overflow-hidden"
       >
-        <div className="max-w-[1440px] mx-auto">
-          {/* Header */}
-          <div data-reveal className="mb-[80px]">
-            <p className="text-[11px] text-[#516254] uppercase tracking-[0.11px] mb-[20px]">
-              {lang === "fa" ? "تماس" : "Contact"}
-            </p>
-            <h2
-              className="font-editorial text-[#121613]"
-              style={{ fontSize: "clamp(48px, 7vw, 96px)", lineHeight: 0.90, letterSpacing: "-0.02em" }}
-            >
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div ref={headerRef} className="text-center mb-16">
+            <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
               {copy.headline}
             </h2>
+            <p className="text-[#516254] text-lg">{copy.subtext}</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-[80px] items-start">
-            {/* Contact info — text links only */}
-            <div data-reveal className="flex flex-col border-t border-[#121613]/10">
-              {[
-                {
-                  label: copy.phone,
-                  value: lang === "fa" ? siteData.contact.phoneFa : siteData.contact.phone,
-                  href: `tel:${siteData.contact.phone}`,
-                },
-                {
-                  label: copy.instagram,
-                  value: siteData.contact.instagram || copy.instagramPlaceholder,
-                  href: siteData.contact.instagram
-                    ? `https://instagram.com/${siteData.contact.instagram}`
-                    : undefined,
-                },
-                {
-                  label: copy.whatsapp,
-                  value: lang === "fa" ? siteData.contact.phoneFa : siteData.contact.whatsapp,
-                  href: `https://wa.me/${siteData.contact.whatsapp.replace(/^0/, "98")}`,
-                },
-              ].map((item, i) => (
-                <div key={i} className="border-b border-[#121613]/10 py-[20px]">
-                  <p className="text-[11px] text-[#516254] uppercase tracking-[0.11px] mb-[6px]">{item.label}</p>
-                  {item.href ? (
-                    <a
-                      href={item.href}
-                      target={item.href.startsWith("http") ? "_blank" : undefined}
-                      rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="text-[18px] text-[#121613] hover:text-[#2bee4b] transition-colors font-medium"
-                      dir={item.href.startsWith("tel") ? "ltr" : undefined}
-                    >
-                      {item.value}
-                    </a>
-                  ) : (
-                    <p className="text-[18px] text-[#516254] font-medium">{item.value}</p>
-                  )}
-                </div>
-              ))}
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            {/* Contact cards */}
+            <div ref={cardsRef} className="flex flex-col gap-4">
+              {contactCards.map((card, i) => {
+                const Icon = card.icon
+                const Inner = (
+                  <div
+                    className={`flex items-center gap-4 p-5 rounded-2xl bg-[#f0f4f0] border transition-all duration-200 ${
+                      card.available
+                        ? "border-[#121613]/8 hover:border-[#2bee4b]/35 cursor-pointer"
+                        : "border-[#121613]/6 opacity-50"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-[#2bee4b]/10 border border-[#2bee4b]/20 flex items-center justify-center flex-shrink-0">
+                      <Icon size={20} className="text-[#121613]" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-xs text-[#516254]">{card.label}</span>
+                      <span
+                        className={`font-semibold ${card.available ? "text-[#121613]" : "text-[#516254]"}`}
+                        dir={lang === "fa" && card.href?.startsWith("tel") ? "ltr" : undefined}
+                      >
+                        {card.value}
+                      </span>
+                    </div>
+                  </div>
+                )
+
+                return card.href && card.available ? (
+                  <a
+                    key={i}
+                    href={card.href}
+                    target={card.href.startsWith("http") ? "_blank" : undefined}
+                    rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  >
+                    {Inner}
+                  </a>
+                ) : (
+                  <div key={i}>{Inner}</div>
+                )
+              })}
             </div>
 
-            {/* Form — minimal, no card background */}
-            <form data-reveal onSubmit={handleSubmit} className="flex flex-col gap-[20px]">
-              <div className="border-b border-[#121613]/15 pb-[4px] focus-within:border-[#121613]">
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={copy.name}
-                  className="w-full bg-transparent text-[16px] text-[#121613] placeholder-[#516254]/50 py-[10px] focus:outline-none"
-                />
-              </div>
-              <div className="border-b border-[#121613]/15 pb-[4px] focus-within:border-[#121613]">
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder={copy.message}
-                  rows={5}
-                  className="w-full bg-transparent text-[16px] text-[#121613] placeholder-[#516254]/50 py-[10px] focus:outline-none resize-none"
-                />
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  className="px-[50px] py-[18px] bg-[#2bee4b] text-[#121613] text-[14px] font-semibold rounded-[10px] flex items-center gap-2 transition-opacity hover:opacity-90 w-fit"
-                  style={{ boxShadow: "rgba(16,94,29,0.45) 1px 8px 20px 0px, rgba(18,146,39,0.25) 1px 8px 20px 0px" }}
-                >
-                  {copy.send}
-                  <span aria-hidden>{isRtl ? "←" : "→"}</span>
-                </button>
-              </div>
+            {/* Contact form */}
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4 p-6 rounded-2xl bg-[#f0f4f0] border border-[#121613]/8"
+            >
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={copy.name}
+                className="w-full px-4 py-3 bg-[#fafffa] border border-[#121613]/10 rounded-xl text-[#121613] placeholder-[#516254]/50 text-sm focus:outline-none focus:border-[#2bee4b]/50 transition-colors"
+              />
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={copy.message}
+                rows={5}
+                className="w-full px-4 py-3 bg-[#fafffa] border border-[#121613]/10 rounded-xl text-[#121613] placeholder-[#516254]/50 text-sm focus:outline-none focus:border-[#2bee4b]/50 transition-colors resize-none"
+              />
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-2 py-3.5 bg-[#2bee4b] hover:bg-[#20cc3e] text-[#121613] font-bold rounded-xl transition-all duration-200 text-sm"
+              >
+                <Send size={15} />
+                {copy.send}
+              </button>
             </form>
           </div>
         </div>
@@ -144,27 +196,21 @@ export default function ContactSection() {
       {/* Obsidian footer panel */}
       <footer
         dir={isRtl ? "rtl" : "ltr"}
-        className="bg-[#121613] px-[50px] py-[60px]"
+        className="bg-[#121613] px-6 py-12"
       >
-        <div className="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-baseline gap-0">
-            <span className="text-[16px] font-semibold text-[#fafffa]">
-              {lang === "fa" ? "کافه" : "Caffe"}
-            </span>
-            <span className="text-[16px] font-semibold text-[#2bee4b]">
-              {lang === "fa" ? "گالری" : "gallery"}
-            </span>
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-[#2bee4b] font-bold text-lg">{lang === "fa" ? "کافه" : "Caffe"}</span>
+            <span className="text-[#fafffa] font-bold text-lg">{lang === "fa" ? "گالری" : "gallery"}</span>
           </div>
-          <div className="flex flex-col items-end gap-1">
-            <p className="text-[13px] text-[#516254]">
-              {lang === "fa"
-                ? `© ${new Date().getFullYear()} — ${siteData.brand.manager.fa}`
-                : `© ${new Date().getFullYear()} — ${siteData.brand.manager.en}`}
-            </p>
-            <p className="text-[11px] text-[#516254]/50 uppercase tracking-[0.11px]">
-              TAVAKOLISTUDIO
-            </p>
-          </div>
+          <p className="text-[#516254] text-sm text-center">
+            {lang === "fa"
+              ? `© ${new Date().getFullYear()} کافه گالری — ${siteData.brand.manager.fa}`
+              : `© ${new Date().getFullYear()} Caffegallery — ${siteData.brand.manager.en}`}
+          </p>
+          <p className="text-[#516254]/50 text-xs tracking-[0.3em] uppercase">
+            Designed by <span className="text-[#2bee4b]">TAVAKOLISTUDIO</span>
+          </p>
         </div>
       </footer>
     </>

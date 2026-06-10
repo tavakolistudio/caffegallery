@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Vazirmatn, Inter, Cormorant_Garamond } from "next/font/google"
+import { Vazirmatn, Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { LangProvider } from "@/lib/i18n"
 
@@ -14,14 +14,14 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 })
 
-const cormorant = Cormorant_Garamond({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-editorial",
+  variable: "--font-playfair",
   display: "swap",
-  weight: ["300", "400"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
 })
 
@@ -45,7 +45,7 @@ export default function RootLayout({
     <html
       lang="fa"
       dir="rtl"
-      className={`${vazirmatn.variable} ${inter.variable} ${cormorant.variable}`}
+      className={`${vazirmatn.variable} ${inter.variable} ${playfair.variable}`}
     >
       <body className="min-h-screen bg-[#fafffa] text-[#121613]">
         <LangProvider>{children}</LangProvider>
