@@ -13,11 +13,6 @@
 }
 
 :root {
-  --color-linen: #fafffa;
-  --color-obsidian-ink: #121613;
-  --color-voltage: #2bee4b;
-  --color-sage: #516254;
-  --color-mist: #c8d2c8;
   --shadow-voltage: rgba(16,94,29,0.45) 1px 8px 20px 0px, rgba(18,146,39,0.25) 1px 8px 20px 0px;
 }
 
@@ -30,36 +25,33 @@ body {
   color: #121613;
 }
 
-[dir="rtl"] body,
-[dir="rtl"] {
+/* Body text — RTL uses Vazirmatn, LTR uses Inter */
+[dir="rtl"] { font-family: var(--font-vazirmatn), sans-serif; }
+[dir="ltr"] { font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif; }
+
+/*
+  Editorial display — Cormorant Garamond weight 300 italic.
+  The spec calls for Editorial New weight 300 at 140-240px.
+  Cormorant at 300 italic is the closest Google Fonts match.
+*/
+.font-editorial {
+  font-family: var(--font-editorial), 'Times New Roman', Georgia, serif;
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -0.025em;
+  line-height: 0.90;
+}
+
+/* Persian override: Vazirmatn at matching scale — no italic needed */
+[dir="rtl"] .font-editorial {
   font-family: var(--font-vazirmatn), sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  letter-spacing: -0.01em;
 }
 
-[dir="ltr"] body,
-[dir="ltr"] {
-  font-family: var(--font-inter), sans-serif;
-}
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #fafffa; }
+::-webkit-scrollbar-thumb { background: #2bee4b; border-radius: 10px; }
 
-.font-display {
-  font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
-}
-
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: #fafffa;
-}
-::-webkit-scrollbar-thumb {
-  background: #2bee4b;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #20cc3e;
-}
-
-::selection {
-  background: #2bee4b;
-  color: #121613;
-}
+::selection { background: #2bee4b; color: #121613; }

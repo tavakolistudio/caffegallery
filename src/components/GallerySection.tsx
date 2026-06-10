@@ -30,75 +30,67 @@ export default function GallerySection() {
     <section
       id="gallery"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#fafffa]"
+      className="bg-[#fafffa] px-[50px] py-[120px]"
     >
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1440px] mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
-            {copy.headline}
-          </h2>
-          <p className="text-[#516254] text-lg">{copy.subtext}</p>
-        </motion.div>
-
-        {/* Filter chips */}
-        <div className="flex flex-wrap gap-2 justify-center mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActive(cat)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                active === cat
-                  ? "bg-[#2bee4b] text-[#121613]"
-                  : "bg-[#f0f4f0] border border-[#121613]/10 text-[#516254] hover:border-[#2bee4b]/40 hover:text-[#121613]"
-              }`}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-[60px]">
+          <div>
+            <p className="text-[11px] text-[#516254] uppercase tracking-[0.11px] mb-[16px]">
+              {lang === "fa" ? "گالری" : "Gallery"}
+            </p>
+            <h2
+              className="font-editorial text-[#121613]"
+              style={{ fontSize: "clamp(48px, 7vw, 96px)", lineHeight: 0.90, letterSpacing: "-0.02em" }}
             >
-              {categoryLabel[cat]}
-            </button>
-          ))}
+              {copy.headline}
+            </h2>
+          </div>
+
+          {/* Filter — ghost text links, not pills */}
+          <div className="flex gap-6">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActive(cat)}
+                className={`text-[14px] transition-colors ${
+                  active === cat
+                    ? "text-[#121613] font-medium underline underline-offset-4"
+                    : "text-[#516254] hover:text-[#121613]"
+                }`}
+              >
+                {categoryLabel[cat]}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Gallery grid */}
-        <motion.div
-          layout
-          className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4"
-        >
+        {/* Editorial masonry — images directly on Linen, no card chrome */}
+        <motion.div layout className="columns-1 sm:columns-2 lg:columns-3 gap-[20px] space-y-[20px]">
           <AnimatePresence>
             {filtered.map((item) => (
               <motion.div
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
                 className="break-inside-avoid cursor-pointer group"
                 onClick={() => setLightbox(item.image)}
               >
-                <div className="relative overflow-hidden rounded-[14px] border border-[#121613]/8 group-hover:border-[#2bee4b]/40 transition-all duration-300">
+                <div className="relative overflow-hidden rounded-[14px]">
                   <img
                     src={item.image}
                     alt={lang === "fa" ? item.titleFa : item.titleEn}
                     className="w-full h-56 object-cover block grayscale group-hover:grayscale-0 transition-all duration-500"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-[#121613]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
-                    <span className="text-[#fafffa] text-sm font-medium drop-shadow">
-                      {lang === "fa" ? item.titleFa : item.titleEn}
-                    </span>
-                  </div>
-                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#fafffa]/90 border border-[#2bee4b]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#121613" strokeWidth="2">
-                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                    </svg>
-                  </div>
+                  <div className="absolute inset-0 bg-[#121613]/0 group-hover:bg-[#121613]/20 transition-colors duration-300" />
+                  {/* Caption — bottom-left, editorial style */}
+                  <p className="absolute bottom-0 left-0 right-0 px-4 py-3 text-[12px] text-[#fafffa] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {lang === "fa" ? item.titleFa : item.titleEn}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -113,20 +105,20 @@ export default function GallerySection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#121613]/85 flex items-center justify-center p-8 backdrop-blur-md"
+            className="fixed inset-0 z-[100] bg-[#121613]/90 flex items-center justify-center p-8 backdrop-blur-sm"
             onClick={() => setLightbox(null)}
           >
             <button
-              className="absolute top-6 right-6 w-10 h-10 rounded-full border border-[#fafffa]/20 flex items-center justify-center text-[#fafffa]/70 hover:text-[#fafffa] hover:border-[#2bee4b] transition-all"
+              className="absolute top-6 right-6 w-10 h-10 rounded-full border border-[#fafffa]/20 flex items-center justify-center text-[#fafffa]/70 hover:text-[#fafffa] transition-colors"
               onClick={() => setLightbox(null)}
             >
               <X size={18} />
             </button>
             <motion.div
-              initial={{ scale: 0.85 }}
+              initial={{ scale: 0.88 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.85 }}
-              className="max-w-3xl w-full rounded-2xl overflow-hidden border border-[#fafffa]/15"
+              exit={{ scale: 0.88 }}
+              className="max-w-3xl w-full rounded-[14px] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <img

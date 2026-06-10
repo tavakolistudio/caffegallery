@@ -4,7 +4,7 @@ import { Volume2, VolumeX } from "lucide-react"
 
 export default function SoundToggle() {
   const [playing, setPlaying] = useState(false)
-  const howlRef = useRef<{ play: () => void; pause: () => void; stop: () => void } | null>(null)
+  const howlRef = useRef<{ play: () => void; pause: () => void } | null>(null)
   const [loaded, setLoaded] = useState(false)
 
   const toggle = async () => {
@@ -15,9 +15,7 @@ export default function SoundToggle() {
           src: ["/audio/cafe-ambience.mp3"],
           loop: true,
           volume: 0.3,
-          onloaderror: () => {
-            // fail silently if file missing
-          },
+          onloaderror: () => {},
         })
         setLoaded(true)
       }
@@ -28,18 +26,16 @@ export default function SoundToggle() {
         howlRef.current?.play()
         setPlaying(true)
       }
-    } catch {
-      // fail silently
-    }
+    } catch {}
   }
 
   return (
     <button
       onClick={toggle}
-      aria-label={playing ? "Mute ambient sound" : "Play ambient sound"}
-      className="w-9 h-9 flex items-center justify-center rounded-full border border-[#121613]/12 text-[#516254] hover:text-[#121613] hover:border-[#121613]/30 transition-all duration-200"
+      aria-label={playing ? "Mute" : "Sound"}
+      className="text-[#516254] hover:text-[#121613] transition-colors"
     >
-      {playing ? <Volume2 size={16} /> : <VolumeX size={16} />}
+      {playing ? <Volume2 size={15} /> : <VolumeX size={15} />}
     </button>
   )
 }

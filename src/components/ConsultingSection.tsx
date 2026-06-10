@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { CheckCircle2, Phone } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 
@@ -11,7 +10,7 @@ export default function ConsultingSection() {
   const copy = siteData.copy[lang].consulting
 
   const textRef = useRef<HTMLDivElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger)
@@ -19,30 +18,29 @@ export default function ConsultingSection() {
     const ctx = gsap.context(() => {
       gsap.fromTo(
         textRef.current,
-        { opacity: 0, y: 40 },
+        { opacity: 0, y: 30 },
         {
           opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
-          scrollTrigger: { trigger: textRef.current, start: "top 80%", once: true },
+          scrollTrigger: { trigger: textRef.current, start: "top 85%", once: true },
         }
       )
 
       if (listRef.current) {
         gsap.fromTo(
           Array.from(listRef.current.children),
-          { opacity: 0, y: 20 },
+          { opacity: 0, y: 12 },
           {
             opacity: 1, y: 0,
-            stagger: 0.07,
-            duration: 0.55,
+            stagger: 0.06,
+            duration: 0.5,
             ease: "power2.out",
-            scrollTrigger: { trigger: listRef.current, start: "top 78%", once: true },
+            scrollTrigger: { trigger: listRef.current, start: "top 82%", once: true },
           }
         )
       }
     })
 
     ScrollTrigger.refresh()
-
     return () => ctx.revert()
   }, [])
 
@@ -50,52 +48,46 @@ export default function ConsultingSection() {
     <section
       id="consulting"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#fafffa] overflow-hidden"
+      className="bg-[#fafffa] px-[50px] py-[120px]"
     >
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
+      <div className="max-w-[1440px] mx-auto grid md:grid-cols-2 gap-[80px] items-start">
+        {/* Left: headline + CTA */}
+        <div ref={textRef} className="flex flex-col gap-[30px]">
+          <p className="text-[11px] text-[#516254] uppercase tracking-[0.11px]">
+            {lang === "fa" ? "خدمات مشاوره" : "Consulting"}
+          </p>
+          <h2
+            className="font-editorial text-[#121613]"
+            style={{ fontSize: "clamp(48px, 7vw, 96px)", lineHeight: 0.90, letterSpacing: "-0.02em" }}
+          >
+            {copy.headline}
+          </h2>
+          <p className="text-[16px] text-[#516254] leading-[1.4] max-w-[400px]">{copy.subtext}</p>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          {/* Text side */}
-          <div ref={textRef} className="flex flex-col gap-6">
-            <div className="inline-flex items-center gap-2 w-fit">
-              <span className="px-4 py-1.5 bg-[#2bee4b]/10 border border-[#2bee4b]/25 text-[#121613] text-xs font-semibold rounded-full">
-                {lang === "fa" ? "خدمات مشاوره" : "Consulting Services"}
-              </span>
-            </div>
-
-            <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] leading-[1.05]">
-              {copy.headline}
-            </h2>
-
-            <p className="text-[#516254] text-lg leading-relaxed">{copy.subtext}</p>
-
-            <a
-              href={`tel:${siteData.management.phone}`}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-[#2bee4b] hover:bg-[#20cc3e] text-[#121613] font-bold rounded-full transition-all duration-200 w-fit text-sm"
-              style={{ boxShadow: "rgba(16,94,29,0.35) 0px 8px 24px 0px" }}
-            >
-              <Phone size={16} />
-              {copy.cta}
-            </a>
-          </div>
-
-          {/* Services list */}
-          <div ref={listRef} className="flex flex-col gap-3">
-            {copy.services.map((service, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 p-4 rounded-xl bg-[#f0f4f0] border border-[#121613]/8 hover:border-[#2bee4b]/30 transition-all duration-200 group"
-              >
-                <CheckCircle2
-                  size={16}
-                  className="text-[#2bee4b] shrink-0 group-hover:scale-110 transition-transform"
-                />
-                <span className="text-[#121613] text-sm">{service}</span>
-              </div>
-            ))}
-          </div>
+          <a
+            href={`tel:${siteData.management.phone}`}
+            className="inline-flex items-center gap-2 px-[50px] py-[18px] bg-[#2bee4b] text-[#121613] text-[14px] font-semibold rounded-[10px] w-fit transition-opacity hover:opacity-90"
+            style={{ boxShadow: "rgba(16,94,29,0.45) 1px 8px 20px 0px, rgba(18,146,39,0.25) 1px 8px 20px 0px" }}
+          >
+            {copy.cta}
+            <span aria-hidden>{isRtl ? "←" : "→"}</span>
+          </a>
         </div>
+
+        {/* Right: service list — bullet text, no card backgrounds */}
+        <ul ref={listRef} className="flex flex-col pt-[20px]">
+          {copy.services.map((service, i) => (
+            <li
+              key={i}
+              className="flex items-start gap-[16px] border-t border-[#121613]/10 py-[20px]"
+            >
+              {/* Voltage tick */}
+              <span className="flex-shrink-0 w-[20px] h-[2px] bg-[#2bee4b] mt-[10px]" />
+              <span className="text-[16px] text-[#121613] leading-[1.4]">{service}</span>
+            </li>
+          ))}
+          <div className="border-t border-[#121613]/10" />
+        </ul>
       </div>
     </section>
   )
