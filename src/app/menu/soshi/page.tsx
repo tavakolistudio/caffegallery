@@ -10,11 +10,24 @@ import CheckoutForm from "@/components/menu/CheckoutForm"
 import { formatPrice } from "@/lib/formatPrice"
 import { toPersian } from "@/lib/persianNumbers"
 
+// null = category grid (home), string = inside a category
+type Screen = "home" | string
+
 export default function SoshiMenuPage() {
   const { view, setView, totalItems, totalPrice } = useCart()
+  const [screen, setScreen] = useState<Screen>("home")
   const [search, setSearch] = useState("")
-  const [activeCategory, setActiveCategory] = useState(menuCategories[0].id)
+
   const isSearching = search.trim().length > 0
+  const activeCategory = menuCategories.find(c => c.id === screen)
+
+  const categoryItemCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    menuCategories.forEach(cat => {
+      counts[cat.id] = menuItems.filter(i => i.category === cat.id).length
+    })
+    return counts
+  }, [])
 
   const filtered = useMemo(() => {
     if (isSearching) {
@@ -25,8 +38,9 @@ export default function SoshiMenuPage() {
           i.ingredients.toLowerCase().includes(q),
       )
     }
-    return menuItems.filter(i => i.category === activeCategory)
-  }, [search, activeCategory, isSearching])
+    if (screen !== "home") return menuItems.filter(i => i.category === screen)
+    return []
+  }, [search, screen, isSearching])
 
   return (
     <>
@@ -45,13 +59,36 @@ export default function SoshiMenuPage() {
         style={{ background: "#FAFFFA", borderColor: "#E2EDE8" }}
       >
         <div className="flex items-center justify-between px-5 py-4 max-w-2xl mx-auto">
-          <span
-            className="text-xs font-semibold tracking-[0.2em]"
-            style={{ color: "#516254" }}
+          {/* Left slot */}
+          {screen !== "home" && !isSearching ? (
+            <button
+              onClick={() => setScreen("home")}
+              className="flex items-center gap-1.5 text-sm font-semibold transition-opacity hover:opacity-70"
+              style={{ color: "#1B5C38" }}
+            >
+              <span className="text-base leading-none">←</span>
+              <span>دسته‌بندی‌ها</span>
+            </button>
+          ) : (
+            <span
+              className="text-xs font-semibold tracking-[0.2em]"
+              style={{ color: "#516254" }}
+            >
+              CAFFEGALLERY
+            </span>
+          )}
+
+          {/* Center title — tap to go home */}
+          <button
+            onClick={() => { setScreen("home"); setSearch("") }}
+            className="font-bold text-base text-[#121613] transition-opacity hover:opacity-70"
           >
-            CAFFEGALLERY
-          </span>
-          <h1 className="font-bold text-base text-[#121613]">منو سوشی گالری</h1>
+            {screen !== "home" && !isSearching
+              ? activeCategory?.name
+              : "منو سوشی گالری"}
+          </button>
+
+          {/* Right slot */}
           <Link
             href="/menu/soshi/orders"
             className="text-xs font-medium"
@@ -63,7 +100,7 @@ export default function SoshiMenuPage() {
       </header>
 
       {/* ── SEARCH ──────────────────────────────────────────────────── */}
-      <div className="px-5 pt-4 pb-2 max-w-2xl mx-auto">
+      <div className="px-5 pt-4 pb-3 max-w-2xl mx-auto">
         <div className="relative">
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[#A0B0A4] text-base pointer-events-none">
             🔍
@@ -72,7 +109,7 @@ export default function SoshiMenuPage() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="جستجوی غذا..."
+            placeholder="جستجوی غذا در همه دسته‌ها..."
             className="w-full py-3 pr-11 pl-10 rounded-2xl text-sm border outline-none transition text-[#121613]"
             style={{
               background: "#FFFFFF",
@@ -92,54 +129,94 @@ export default function SoshiMenuPage() {
         </div>
       </div>
 
-      {/* ── CATEGORY TABS ───────────────────────────────────────────── */}
-      {!isSearching && (
-        <div
-          className="sticky z-10 py-2"
-          style={{ top: "65px", background: "#FAFFFA" }}
-        >
-          <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-            <div className="flex gap-2 px-5 pb-1" style={{ width: "max-content" }}>
+      {/* ── MAIN CONTENT ────────────────────────────────────────────── */}
+      <main
+        className="px-5 max-w-2xl mx-auto"
+        style={{ paddingBottom: "8rem" }}
+      >
+        {isSearching ? (
+          /* ── SEARCH RESULTS ── */
+          <>
+            {filtered.length > 0 && (
+              <p className="text-sm text-[#6B7C6E] mb-4">
+                {toPersian(filtered.length)} نتیجه در همه دسته‌ها
+              </p>
+            )}
+            {filtered.length === 0 ? (
+              <EmptySearch />
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {filtered.map(item => <MenuCard key={item.id} item={item} />)}
+              </div>
+            )}
+          </>
+        ) : screen === "home" ? (
+          /* ── CATEGORY GRID (HOME) ── */
+          <>
+            <p
+              className="text-xs font-semibold tracking-widest text-center mb-4 mt-1"
+              style={{ color: "#A0B0A4", letterSpacing: "0.2em" }}
+            >
+              — انتخاب دسته‌بندی —
+            </p>
+            <div className="grid grid-cols-2 gap-3">
               {menuCategories.map(cat => (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className="px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all"
+                  onClick={() => setScreen(cat.id)}
+                  className="bg-white rounded-2xl p-5 flex flex-col gap-2 transition-all active:scale-[0.97] text-right"
                   style={{
-                    background: activeCategory === cat.id ? "#1B5C38" : "#EEF7F2",
-                    color: activeCategory === cat.id ? "#FFFFFF" : "#516254",
+                    border: "1px solid #E8EFE9",
+                    borderRight: "3px solid #1B5C38",
+                    boxShadow: "0 2px 12px rgba(27,92,56,0.06)",
                   }}
                 >
-                  {cat.name}
+                  <p className="font-bold text-[#121613] text-[15px] leading-snug">
+                    {cat.name}
+                  </p>
+                  <p className="text-xs" style={{ color: "#A0B0A4" }}>
+                    {toPersian(categoryItemCounts[cat.id])} غذا
+                  </p>
                 </button>
               ))}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── ITEMS GRID ──────────────────────────────────────────────── */}
-      <main
-        className="px-5 max-w-2xl mx-auto"
-        style={{ paddingTop: "1rem", paddingBottom: "8rem" }}
-      >
-        {isSearching && filtered.length > 0 && (
-          <p className="text-sm text-[#6B7C6E] mb-4">
-            {toPersian(filtered.length)} نتیجه
-          </p>
-        )}
-
-        {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
-            <span className="text-6xl select-none">🔍</span>
-            <p className="text-[#6B7C6E] font-medium text-base">غذایی پیدا نشد</p>
-          </div>
+          </>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {filtered.map(item => (
-              <MenuCard key={item.id} item={item} />
-            ))}
-          </div>
+          /* ── CATEGORY ITEMS ── */
+          <>
+            {/* Quick category switcher */}
+            <div className="overflow-x-auto mb-4 pt-1" style={{ scrollbarWidth: "none" }}>
+              <div className="flex gap-2" style={{ width: "max-content" }}>
+                {menuCategories.map(cat => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setScreen(cat.id)}
+                    className="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all"
+                    style={{
+                      background: screen === cat.id ? "#1B5C38" : "#EEF7F2",
+                      color: screen === cat.id ? "#FFFFFF" : "#516254",
+                    }}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {filtered.map(item => <MenuCard key={item.id} item={item} />)}
+            </div>
+
+            {/* Back to categories button at bottom */}
+            <button
+              onClick={() => setScreen("home")}
+              className="mt-6 w-full py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 transition-all"
+              style={{ background: "#EEF7F2", color: "#1B5C38", border: "1px solid #D4E8DA" }}
+            >
+              <span>←</span>
+              <span>بازگشت به همه دسته‌بندی‌ها</span>
+            </button>
+          </>
         )}
       </main>
 
@@ -175,6 +252,15 @@ export default function SoshiMenuPage() {
         </div>
       )}
     </>
+  )
+}
+
+function EmptySearch() {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+      <span className="text-6xl select-none">🔍</span>
+      <p className="text-[#6B7C6E] font-medium text-base">غذایی پیدا نشد</p>
+    </div>
   )
 }
 
