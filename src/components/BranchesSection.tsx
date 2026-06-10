@@ -1,22 +1,48 @@
 "use client"
-import { motion } from "framer-motion"
+import { useEffect, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Phone, MapPin, Clock, AlertTriangle, Map } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08 } },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55 } },
-}
-
 export default function BranchesSection() {
   const { lang, isRtl } = useLang()
   const copy = siteData.copy[lang].branches
+
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: headerRef.current, start: "top 82%", once: true },
+        }
+      )
+
+      if (cardsRef.current) {
+        gsap.fromTo(
+          Array.from(cardsRef.current.children),
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1, y: 0,
+            stagger: 0.08,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: { trigger: cardsRef.current, start: "top 78%", once: true },
+          }
+        )
+      }
+    })
+
+    return () => ctx.revert()
+  }, [])
 
   return (
     <section
@@ -24,30 +50,18 @@ export default function BranchesSection() {
       dir={isRtl ? "rtl" : "ltr"}
       className="relative py-28 px-6 bg-[#080604]"
     >
-      {/* Subtle radial glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#C58A45]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
+        <div ref={headerRef} className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
             {copy.headline}
           </h2>
           <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
-        </motion.div>
+        </div>
 
-        {/* Grid */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-60px" }}
+        <div
+          ref={cardsRef}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           {siteData.branches.map((branch) => {
@@ -60,12 +74,10 @@ export default function BranchesSection() {
             const note = lang === "fa" ? branch.noteFa : branch.noteEn
 
             return (
-              <motion.div
+              <div
                 key={branch.id}
-                variants={item}
                 className="group flex flex-col rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)] hover:border-[#C58A45]/30 transition-all duration-300 overflow-hidden"
               >
-                {/* Image placeholder */}
                 <div className="w-full h-44 bg-gradient-to-br from-[#1A1208] to-[#0E0A06] flex items-center justify-center relative overflow-hidden flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-br from-[#C58A45]/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="flex flex-col items-center gap-2 text-[#B8A58F]/50">
@@ -77,35 +89,28 @@ export default function BranchesSection() {
                 </div>
 
                 <div className="p-5 flex flex-col gap-3 flex-1">
-                  {/* Name & type */}
                   <div>
-                    <h3 className="font-bold text-[#F4E9D8] leading-snug text-sm mb-2">
-                      {name}
-                    </h3>
+                    <h3 className="font-bold text-[#F4E9D8] leading-snug text-sm mb-2">{name}</h3>
                     <span className="inline-block px-3 py-0.5 bg-[#C58A45]/10 border border-[#C58A45]/20 text-[#C58A45] rounded-full text-xs font-medium">
                       {type}
                     </span>
                   </div>
 
-                  {/* Address */}
                   <div className="flex gap-2 items-start text-xs text-[#B8A58F]">
                     <MapPin size={12} className="text-[#C58A45]/60 shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{address}</span>
                   </div>
 
-                  {/* Phone */}
                   <div className="flex gap-2 items-center text-xs text-[#B8A58F]">
                     <Phone size={12} className="text-[#C58A45]/60 shrink-0" />
                     <span dir="ltr">{phone}</span>
                   </div>
 
-                  {/* Hours */}
                   <div className="flex gap-2 items-center text-xs">
                     <Clock size={12} className="text-[#C58A45]/60 shrink-0" />
                     <span className="text-[#C58A45]">{hours}</span>
                   </div>
 
-                  {/* Features */}
                   {features.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
                       {features.map((f, i) => (
@@ -119,7 +124,6 @@ export default function BranchesSection() {
                     </div>
                   )}
 
-                  {/* Note */}
                   {note && (
                     <div className="flex gap-2 items-start px-3 py-2 bg-[#C58A45]/8 border border-[#C58A45]/20 rounded-xl text-xs text-[#C58A45]/80">
                       <AlertTriangle size={11} className="shrink-0 mt-0.5" />
@@ -127,7 +131,6 @@ export default function BranchesSection() {
                     </div>
                   )}
 
-                  {/* Action buttons */}
                   <div className="flex gap-2 mt-auto pt-2">
                     <a
                       href={`tel:${branch.phone}`}
@@ -159,10 +162,10 @@ export default function BranchesSection() {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )
           })}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

@@ -1,5 +1,8 @@
 "use client"
+import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 
@@ -14,13 +17,64 @@ export default function StorySection() {
   const { lang, isRtl } = useLang()
   const copy = siteData.copy[lang].story
 
+  const textRef = useRef<HTMLDivElement>(null)
+  const visualRef = useRef<HTMLDivElement>(null)
+  const stat30Ref = useRef<HTMLSpanElement>(null)
+  const stat9Ref = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        textRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: textRef.current, start: "top 82%", once: true },
+        }
+      )
+
+      gsap.fromTo(
+        visualRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out",
+          scrollTrigger: { trigger: visualRef.current, start: "top 82%", once: true },
+        }
+      )
+
+      // Animated counters
+      const obj30 = { val: 0 }
+      const el30 = stat30Ref.current
+      if (el30) {
+        gsap.to(obj30, {
+          val: 30, duration: 2.5, ease: "power2.out",
+          onUpdate: () => { el30.textContent = Math.round(obj30.val) + "+" },
+          scrollTrigger: { trigger: textRef.current, start: "top 75%", once: true },
+        })
+      }
+
+      const obj9 = { val: 0 }
+      const el9 = stat9Ref.current
+      if (el9) {
+        gsap.to(obj9, {
+          val: 9, duration: 2, ease: "power2.out",
+          onUpdate: () => { el9.textContent = Math.round(obj9.val).toString() },
+          scrollTrigger: { trigger: textRef.current, start: "top 75%", once: true },
+        })
+      }
+    })
+
+    return () => ctx.revert()
+  }, [])
+
   return (
     <section
       id="story"
       dir={isRtl ? "rtl" : "ltr"}
       className="relative py-28 px-6 overflow-hidden bg-[#080604]"
     >
-      {/* Subtle grid bg */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -32,14 +86,7 @@ export default function StorySection() {
 
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         {/* Text side */}
-        <motion.div
-          initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="flex flex-col gap-6"
-        >
-          {/* Badge */}
+        <div ref={textRef} className="flex flex-col gap-6">
           <div className="inline-flex items-center gap-2 w-fit">
             <span className="px-4 py-1.5 bg-[#C58A45]/15 border border-[#C58A45]/30 text-[#C58A45] text-xs font-semibold rounded-full tracking-wide">
               {copy.badge}
@@ -50,40 +97,36 @@ export default function StorySection() {
             {copy.headline}
           </h2>
 
-          <p className="text-[#B8A58F] text-lg leading-relaxed">
-            {copy.body}
-          </p>
+          <p className="text-[#B8A58F] text-lg leading-relaxed">{copy.body}</p>
 
-          {/* Stats row */}
           <div className="flex gap-8 pt-4">
-            {[
-              { num: "30+", label: lang === "fa" ? "سال تجربه" : "Years experience" },
-              { num: "9", label: lang === "fa" ? "شعبه فعال" : "Active branches" },
-            ].map((s) => (
-              <div key={s.num} className="flex flex-col gap-1">
-                <span className="text-4xl font-bold text-[#C58A45]">{s.num}</span>
-                <span className="text-sm text-[#B8A58F]">{s.label}</span>
-              </div>
-            ))}
+            <div className="flex flex-col gap-1">
+              <span ref={stat30Ref} className="text-4xl font-bold text-[#C58A45]">0+</span>
+              <span className="text-sm text-[#B8A58F]">
+                {lang === "fa" ? "سال تجربه" : "Years experience"}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span ref={stat9Ref} className="text-4xl font-bold text-[#C58A45]">0</span>
+              <span className="text-sm text-[#B8A58F]">
+                {lang === "fa" ? "شعبه فعال" : "Active branches"}
+              </span>
+            </div>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Visual side */}
-        <motion.div
-          initial={{ opacity: 0, x: isRtl ? -40 : 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative h-80 md:h-96"
-        >
+        {/* Visual side — GSAP handles the reveal, Framer Motion handles the bounce loop */}
+        <div ref={visualRef} className="relative h-80 md:h-96">
           {floatingFrames.map((f, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: f.delay }}
               animate={{ y: [0, -8, 0] }}
+              transition={{
+                duration: 2 + f.delay,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: f.delay,
+              }}
               style={{ left: f.x, top: f.y, width: f.w, height: f.h, position: "absolute" }}
               className="rounded-2xl border border-[rgba(197,138,69,0.25)] bg-[#120E0A]/80 backdrop-blur-sm flex items-center justify-center"
             >
@@ -94,7 +137,7 @@ export default function StorySection() {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

@@ -1,6 +1,7 @@
 "use client"
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Phone, AtSign, MessageCircle, Send } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
@@ -11,9 +12,62 @@ export default function ContactSection() {
   const [name, setName] = useState("")
   const [message, setMessage] = useState("")
 
+  const headerRef = useRef<HTMLDivElement>(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headerRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 0.8, ease: "power3.out",
+          scrollTrigger: { trigger: headerRef.current, start: "top 82%", once: true },
+        }
+      )
+
+      if (cardsRef.current) {
+        gsap.fromTo(
+          Array.from(cardsRef.current.children),
+          { opacity: 0, y: 25 },
+          {
+            opacity: 1, y: 0,
+            stagger: 0.1,
+            duration: 0.65,
+            ease: "power3.out",
+            scrollTrigger: { trigger: cardsRef.current, start: "top 80%", once: true },
+          }
+        )
+      }
+
+      gsap.fromTo(
+        formRef.current,
+        { opacity: 0, y: 25 },
+        {
+          opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power3.out",
+          scrollTrigger: { trigger: formRef.current, start: "top 80%", once: true },
+        }
+      )
+
+      gsap.fromTo(
+        footerRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1, duration: 0.7,
+          scrollTrigger: { trigger: footerRef.current, start: "top 90%", once: true },
+        }
+      )
+    })
+
+    return () => ctx.revert()
+  }, [])
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // UI only — no backend
     setName("")
     setMessage("")
   }
@@ -30,7 +84,9 @@ export default function ContactSection() {
       icon: AtSign,
       label: copy.instagram,
       value: siteData.contact.instagram || copy.instagramPlaceholder,
-      href: siteData.contact.instagram ? `https://instagram.com/${siteData.contact.instagram}` : undefined,
+      href: siteData.contact.instagram
+        ? `https://instagram.com/${siteData.contact.instagram}`
+        : undefined,
       available: !!siteData.contact.instagram,
     },
     {
@@ -48,36 +104,20 @@ export default function ContactSection() {
       dir={isRtl ? "rtl" : "ltr"}
       className="relative py-28 px-6 bg-[#0C0906] overflow-hidden"
     >
-      {/* Decorative amber line top */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#C58A45]/30 to-transparent" />
-
-      {/* Glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#C58A45]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-16"
-        >
+        <div ref={headerRef} className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
             {copy.headline}
           </h2>
           <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Contact cards */}
-          <motion.div
-            initial={{ opacity: 0, x: isRtl ? 30 : -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="flex flex-col gap-4"
-          >
+          <div ref={cardsRef} className="flex flex-col gap-4">
             {contactCards.map((card, i) => {
               const Icon = card.icon
               const Inner = (
@@ -93,7 +133,10 @@ export default function ContactSection() {
                   </div>
                   <div className="flex flex-col gap-0.5">
                     <span className="text-xs text-[#B8A58F]">{card.label}</span>
-                    <span className={`font-semibold ${card.available ? "text-[#F4E9D8]" : "text-[#B8A58F]"}`} dir={lang === "fa" && card.href?.startsWith("tel") ? "ltr" : undefined}>
+                    <span
+                      className={`font-semibold ${card.available ? "text-[#F4E9D8]" : "text-[#B8A58F]"}`}
+                      dir={lang === "fa" && card.href?.startsWith("tel") ? "ltr" : undefined}
+                    >
                       {card.value}
                     </span>
                   </div>
@@ -101,38 +144,23 @@ export default function ContactSection() {
               )
 
               return card.href && card.available ? (
-                <motion.a
+                <a
                   key={i}
                   href={card.href}
                   target={card.href.startsWith("http") ? "_blank" : undefined}
                   rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
                 >
                   {Inner}
-                </motion.a>
+                </a>
               ) : (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                >
-                  {Inner}
-                </motion.div>
+                <div key={i}>{Inner}</div>
               )
             })}
-          </motion.div>
+          </div>
 
           {/* Contact form */}
-          <motion.form
-            initial={{ opacity: 0, x: isRtl ? -30 : 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+          <form
+            ref={formRef}
             onSubmit={handleSubmit}
             className="flex flex-col gap-4 p-6 rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)]"
           >
@@ -157,15 +185,11 @@ export default function ContactSection() {
               <Send size={15} />
               {copy.send}
             </button>
-          </motion.form>
+          </form>
         </div>
 
-        {/* Footer note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.5 }}
+        <div
+          ref={footerRef}
           className="text-center mt-20 pt-8 border-t border-[rgba(244,233,216,0.06)]"
         >
           <p className="text-[#B8A58F]/60 text-sm">
@@ -173,7 +197,7 @@ export default function ContactSection() {
               ? `© ${new Date().getFullYear()} کافه گالری — ${siteData.brand.manager.fa}`
               : `© ${new Date().getFullYear()} Caffegallery — ${siteData.brand.manager.en}`}
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   )
