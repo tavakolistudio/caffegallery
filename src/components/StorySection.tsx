@@ -6,11 +6,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 
-const floatingFrames = [
-  { x: 0, y: 0, w: 180, h: 130, delay: 0 },
-  { x: 150, y: 60, w: 140, h: 100, delay: 0.3 },
-  { x: 30, y: 160, w: 120, h: 90, delay: 0.6 },
-  { x: 170, y: 180, w: 100, h: 140, delay: 0.2 },
+const photoCards = [
+  { x: 0,   y: 0,   w: 220, h: 145, delay: 0,   img: "/images/hero/hero-building.jpeg", round: "rounded-2xl" },
+  { x: 190, y: 110, w: 110, h: 155, delay: 0.3, img: "/images/hero/hero-gate.jpeg",     round: "rounded-2xl" },
+  { x: 35,  y: 158, w: 115, h: 115, delay: 0.6, img: "/images/hero/hero-owner.jpeg",    round: "rounded-full" },
 ]
 
 export default function StorySection() {
@@ -117,26 +116,22 @@ export default function StorySection() {
           </div>
         </div>
 
-        {/* Visual side — GSAP handles the reveal, Framer Motion handles the bounce loop */}
+        {/* Visual side — real cafe photos */}
         <div ref={visualRef} className="relative h-80 md:h-96">
-          {floatingFrames.map((f, i) => (
+          {photoCards.map((card, i) => (
             <motion.div
               key={i}
               animate={{ y: [0, -8, 0] }}
               transition={{
-                duration: 2 + f.delay,
+                duration: 2 + card.delay,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: f.delay,
+                delay: card.delay,
               }}
-              style={{ left: f.x, top: f.y, width: f.w, height: f.h, position: "absolute" }}
-              className="rounded-2xl border border-[rgba(197,138,69,0.25)] bg-[#120E0A]/80 backdrop-blur-sm flex items-center justify-center"
+              style={{ left: card.x, top: card.y, width: card.w, height: card.h, position: "absolute" }}
+              className={`${card.round} overflow-hidden border-2 border-[rgba(197,138,69,0.35)] shadow-[0_8px_32px_rgba(0,0,0,0.5)]`}
             >
-              <div className="w-full h-full rounded-2xl bg-gradient-to-br from-[#C58A45]/10 to-[#D7A85B]/5 flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full border border-[#C58A45]/40 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-[#C58A45]/60" />
-                </div>
-              </div>
+              <img src={card.img} alt="" className="w-full h-full object-cover" />
             </motion.div>
           ))}
         </div>
