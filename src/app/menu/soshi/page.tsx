@@ -170,19 +170,35 @@ export default function SoshiMenuPage() {
                 <button
                   key={cat.id}
                   onClick={() => setScreen(cat.id)}
-                  className="bg-white rounded-2xl p-5 flex flex-col gap-2 transition-all active:scale-[0.97] text-right"
+                  className="relative overflow-hidden rounded-2xl transition-all active:scale-[0.97] text-right"
                   style={{
-                    border: "1px solid #E8EFE9",
-                    borderRight: "3px solid #1B5C38",
-                    boxShadow: "0 2px 12px rgba(27,92,56,0.06)",
+                    aspectRatio: "4/3",
+                    boxShadow: "0 2px 16px rgba(0,0,0,0.15)",
                   }}
                 >
-                  <p className="font-bold text-[#121613] text-[15px] leading-snug">
-                    {cat.name}
-                  </p>
-                  <p className="text-xs" style={{ color: "#A0B0A4" }}>
-                    {toPersian(categoryItemCounts[cat.id])} غذا
-                  </p>
+                  {cat.image && (
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                  {/* gradient overlay */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)",
+                    }}
+                  />
+                  {/* text */}
+                  <div className="absolute bottom-0 right-0 left-0 p-3">
+                    <p className="font-bold text-white text-[14px] leading-snug drop-shadow">
+                      {cat.name}
+                    </p>
+                    <p className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>
+                      {toPersian(categoryItemCounts[cat.id])} غذا
+                    </p>
+                  </div>
                 </button>
               ))}
             </div>

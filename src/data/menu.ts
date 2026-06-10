@@ -14,25 +14,26 @@ export interface MenuItem {
 export interface MenuCategory {
   id: string
   name: string
+  image?: string
 }
 
 export const menuCategories: MenuCategory[] = [
-  { id: "salad",        name: "سالاد" },
-  { id: "soup",         name: "سوپ" },
-  { id: "pishghaza",    name: "پیش غذا" },
-  { id: "sushi",        name: "سوشی" },
-  { id: "kari-talai",   name: "کاری طلایی ژاپنی" },
-  { id: "nodel",        name: "نودل" },
-  { id: "chap-soyi",    name: "چاپ سویی" },
-  { id: "tom-yum",      name: "خوراک تام یام" },
-  { id: "khorak",       name: "خوراک" },
-  { id: "hibachi",      name: "هیباچی برنج سرخ‌کرده" },
-  { id: "sachbal",      name: "خوراک ساچبال" },
-  { id: "kari-ghermez", name: "کاری قرمز تایلندی" },
-  { id: "brocoli",      name: "خوراک بروکلی" },
-  { id: "chili",        name: "خوراک چیلی" },
-  { id: "sabzijat",     name: "بشقاب سبزیجات" },
-  { id: "jajang",       name: "جاجانگمیون" },
+  { id: "salad",        name: "سالاد",               image: "/images/menu/cat/salad.webp" },
+  { id: "soup",         name: "سوپ",                 image: "/images/menu/cat/soup.webp" },
+  { id: "pishghaza",    name: "پیش غذا",             image: "/images/menu/cat/pishghaza.webp" },
+  { id: "sushi",        name: "سوشی",                image: "/images/menu/cat/sushi.webp" },
+  { id: "kari-talai",   name: "کاری طلایی ژاپنی",   image: "/images/menu/cat/kari-talai.webp" },
+  { id: "nodel",        name: "نودل",                image: "/images/menu/cat/nodel.webp" },
+  { id: "chap-soyi",    name: "چاپ سویی",            image: "/images/menu/cat/chap-soyi.webp" },
+  { id: "tom-yum",      name: "خوراک تام یام",       image: "/images/menu/cat/tom-yum.webp" },
+  { id: "khorak",       name: "خوراک",               image: "/images/menu/cat/khorak.webp" },
+  { id: "hibachi",      name: "هیباچی برنج سرخ‌کرده", image: "/images/menu/cat/hibachi.webp" },
+  { id: "sachbal",      name: "خوراک ساچبال",        image: "/images/menu/cat/sachbal.webp" },
+  { id: "kari-ghermez", name: "کاری قرمز تایلندی",  image: "/images/menu/cat/kari-ghermez.webp" },
+  { id: "brocoli",      name: "خوراک بروکلی",        image: "/images/menu/cat/brocoli.webp" },
+  { id: "chili",        name: "خوراک چیلی",          image: "/images/menu/cat/chili.webp" },
+  { id: "sabzijat",     name: "بشقاب سبزیجات",       image: "/images/menu/cat/sabzijat.webp" },
+  { id: "jajang",       name: "جاجانگمیون",          image: "/images/menu/cat/jajang.webp" },
 ]
 
 export const menuItems: MenuItem[] = [
