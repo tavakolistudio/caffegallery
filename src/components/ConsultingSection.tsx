@@ -41,6 +41,9 @@ export default function ConsultingSection() {
       }
     })
 
+      ScrollTrigger.refresh()
+    })
+
     return () => ctx.revert()
   }, [])
 

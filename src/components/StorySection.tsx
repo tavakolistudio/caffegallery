@@ -66,6 +66,9 @@ export default function StorySection() {
       }
     })
 
+      ScrollTrigger.refresh()
+    })
+
     return () => ctx.revert()
   }, [])
 

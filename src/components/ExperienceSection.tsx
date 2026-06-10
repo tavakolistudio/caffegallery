@@ -43,6 +43,9 @@ export default function ExperienceSection() {
       }
     })
 
+      ScrollTrigger.refresh()
+    })
+
     return () => ctx.revert()
   }, [])
 

@@ -41,6 +41,9 @@ export default function BranchesSection() {
       }
     })
 
+      ScrollTrigger.refresh()
+    })
+
     return () => ctx.revert()
   }, [])
 
