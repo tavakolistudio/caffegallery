@@ -1,24 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
-@theme {
-  --color-linen: #fafffa;
-  --color-obsidian-ink: #121613;
-  --color-pure-black: #000000;
-  --color-bark: #232924;
-  --color-sage: #516254;
-  --color-mist: #c8d2c8;
-  --color-voltage: #2bee4b;
-  --color-moss-glow: #93b799;
-  --color-pollen: #c4e4c9;
-}
-
 :root {
-  --color-linen: #fafffa;
-  --color-obsidian-ink: #121613;
-  --color-voltage: #2bee4b;
-  --color-sage: #516254;
-  --color-mist: #c8d2c8;
-  --shadow-voltage: rgba(16,94,29,0.45) 1px 8px 20px 0px, rgba(18,146,39,0.25) 1px 8px 20px 0px;
+  --bg: #080604;
+  --surface: #120E0A;
+  --text: #F4E9D8;
+  --muted: #B8A58F;
+  --amber: #C58A45;
+  --gold: #D7A85B;
+  --border: rgba(244, 233, 216, 0.12);
 }
 
 html {
@@ -26,40 +16,46 @@ html {
 }
 
 body {
-  background: #fafffa;
-  color: #121613;
+  background: var(--bg);
+  color: var(--text);
 }
 
 [dir="rtl"] body,
 [dir="rtl"] {
-  font-family: var(--font-vazirmatn), sans-serif;
+  font-family: 'Vazirmatn', sans-serif;
 }
 
 [dir="ltr"] body,
 [dir="ltr"] {
-  font-family: var(--font-inter), sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
-.font-display {
-  font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
-}
-
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #fafffa;
+  background: #080604;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2bee4b;
+  background: #C58A45;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #20cc3e;
+  background: #D7A85B;
 }
 
+/* Selection */
 ::selection {
-  background: #2bee4b;
-  color: #121613;
+  background: rgba(197, 138, 69, 0.35);
+  color: #F4E9D8;
+}
+
+/* Glass card base */
+.glass {
+  background: rgba(18, 14, 10, 0.7);
+  border: 1px solid rgba(244, 233, 216, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }

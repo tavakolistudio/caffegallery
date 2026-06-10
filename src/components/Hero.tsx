@@ -1,8 +1,14 @@
 "use client"
+import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
+
+const CafeGalleryScene = dynamic(
+  () => import("@/components/three/CafeGalleryScene"),
+  { ssr: false }
+)
 
 export default function Hero() {
   const { lang, isRtl } = useLang()
@@ -12,125 +18,88 @@ export default function Hero() {
     <section
       id="hero"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen flex items-center overflow-hidden bg-[#fafffa]"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080604]"
     >
-      {/* Faint ruled lines — editorial texture */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage: "repeating-linear-gradient(0deg, #121613 0px, #121613 1px, transparent 1px, transparent 64px)",
-        }}
-      />
+      {/* Three.js background */}
+      <div className="absolute inset-0 z-0 opacity-60">
+        <CafeGalleryScene />
+      </div>
 
-      <div className="max-w-7xl mx-auto px-6 w-full pt-32 pb-24">
-        <div className="grid md:grid-cols-[1fr_auto] gap-12 items-center">
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#080604]/60 via-transparent to-[#080604]" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#080604]/40 via-transparent to-[#080604]/40" />
 
-          {/* Text column */}
-          <div className="flex flex-col gap-8">
-            {/* Experience tag */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="flex items-center gap-3"
-            >
-              <span className="h-[2px] w-10 bg-[#2bee4b]" />
-              <span className="text-xs tracking-[0.28em] text-[#516254] uppercase font-medium">
-                {siteData.brand.experienceYears}
-              </span>
-            </motion.div>
+      {/* Content */}
+      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="inline-flex items-center gap-2 mb-6"
+        >
+          <span className="w-8 h-[1px] bg-[#C58A45]" />
+          <span className="text-[#C58A45] text-xs tracking-[0.25em] uppercase font-medium">
+            {siteData.brand.experienceYears}
+          </span>
+          <span className="w-8 h-[1px] bg-[#C58A45]" />
+        </motion.div>
 
-            {/* Display headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 32 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, delay: 0.2 }}
-              className="font-display text-[clamp(3.5rem,10vw,8rem)] font-bold leading-[0.92] text-[#121613]"
-            >
-              {lang === "fa" ? (
-                <>
-                  <span className="block">کافه</span>
-                  <span className="block italic text-[#2bee4b]">گالری</span>
-                </>
-              ) : (
-                <>
-                  <span className="block">Caffe</span>
-                  <span className="block italic text-[#2bee4b]">gallery</span>
-                </>
-              )}
-            </motion.h1>
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#F4E9D8] leading-tight mb-6"
+        >
+          {copy.headline}
+        </motion.h1>
 
-            {/* Sub text */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.45 }}
-              className="text-[#516254] text-lg leading-relaxed max-w-md"
-            >
-              {copy.subtext}
-            </motion.p>
+        {/* Subtext */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-lg sm:text-xl text-[#B8A58F] leading-relaxed max-w-2xl mx-auto mb-10"
+        >
+          {copy.subtext}
+        </motion.p>
 
-            {/* CTA */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.65 }}
-              className="flex flex-wrap gap-4"
-            >
-              <a
-                href="#branches"
-                className="px-8 py-4 bg-[#2bee4b] hover:bg-[#20cc3e] text-[#121613] font-bold rounded-full transition-all duration-200 text-sm tracking-wide"
-                style={{ boxShadow: "rgba(16,94,29,0.35) 0px 8px 24px 0px" }}
-              >
-                {copy.ctaBranches}
-              </a>
-              <a
-                href="#gallery"
-                className="px-8 py-4 border border-[#121613]/20 text-[#121613] hover:border-[#121613]/60 font-medium rounded-full transition-all duration-200 text-sm tracking-wide"
-              >
-                {copy.ctaGallery}
-              </a>
-            </motion.div>
-          </div>
-
-          {/* Photo tile */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.93 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="hidden md:block relative"
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+        >
+          <a
+            href="#branches"
+            className="px-8 py-3.5 bg-[#C58A45] hover:bg-[#D7A85B] text-[#080604] font-semibold rounded-full transition-all duration-200 text-sm tracking-wide"
           >
-            <div className="w-[320px] h-[420px] rounded-[14px] overflow-hidden border border-[#121613]/8">
-              <img
-                src={siteData.gallery[0]?.image ?? ""}
-                alt="کافه گالری"
-                className="w-full h-full object-cover grayscale"
-              />
-            </div>
-            {/* Floating stat chip */}
-            <div className="absolute -bottom-5 -left-6 bg-[#fafffa] border border-[#121613]/10 rounded-2xl px-5 py-4 shadow-sm">
-              <p className="text-3xl font-bold text-[#121613] leading-none">30<span className="text-[#2bee4b]">+</span></p>
-              <p className="text-xs text-[#516254] mt-1">
-                {lang === "fa" ? "سال تجربه" : "Years experience"}
-              </p>
-            </div>
-          </motion.div>
-        </div>
+            {copy.ctaBranches}
+          </a>
+          <a
+            href="#gallery"
+            className="px-8 py-3.5 border border-[rgba(244,233,216,0.25)] text-[#F4E9D8] hover:border-[#C58A45] hover:text-[#C58A45] font-medium rounded-full transition-all duration-200 text-sm tracking-wide backdrop-blur-sm"
+          >
+            {copy.ctaGallery}
+          </a>
+        </motion.div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.3 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
       >
-        <span className="text-[#516254] text-[10px] tracking-[0.28em] uppercase">{copy.scroll}</span>
+        <span className="text-[#B8A58F] text-xs tracking-widest uppercase">{copy.scroll}</span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         >
-          <ChevronDown size={18} className="text-[#2bee4b]" />
+          <ChevronDown size={18} className="text-[#C58A45]" />
         </motion.div>
       </motion.div>
     </section>

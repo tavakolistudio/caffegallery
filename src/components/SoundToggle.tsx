@@ -37,7 +37,7 @@ export default function SoundToggle() {
     <button
       onClick={toggle}
       aria-label={playing ? "Mute ambient sound" : "Play ambient sound"}
-      className="w-9 h-9 flex items-center justify-center rounded-full border border-[#121613]/12 text-[#516254] hover:text-[#121613] hover:border-[#121613]/30 transition-all duration-200"
+      className="w-9 h-9 flex items-center justify-center rounded-full border border-[rgba(244,233,216,0.12)] text-[#B8A58F] hover:text-[#C58A45] hover:border-[#C58A45] transition-all duration-200"
     >
       {playing ? <Volume2 size={16} /> : <VolumeX size={16} />}
     </button>

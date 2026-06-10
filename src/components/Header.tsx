@@ -70,41 +70,40 @@ export default function Header() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "bg-[#fafffa]/95 backdrop-blur-md border-b border-[#121613]/8"
+          ? "bg-[#080604]/95 backdrop-blur-md border-b border-[rgba(244,233,216,0.1)]"
           : "bg-transparent"
       )}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
-        {/* Logo — split-color wordmark */}
+        {/* Logo */}
         <a href="#hero" className="flex flex-col leading-none group">
-          <span className="text-lg font-bold leading-tight">
-            <span className="text-[#2bee4b]">{lang === "fa" ? "کافه" : "Caffe"}</span>
-            <span className="text-[#121613]">{lang === "fa" ? " گالری" : "gallery"}</span>
+          <span className="text-lg font-bold text-[#F4E9D8] group-hover:text-[#C58A45] transition-colors">
+            {lang === "fa" ? "کافه گالری" : "Caffegallery"}
           </span>
-          <span className="text-[9px] text-[#516254] tracking-[0.3em] uppercase">
+          <span className="text-[10px] text-[#B8A58F] tracking-widest uppercase">
             {lang === "fa" ? "Caffegallery" : "کافه گالری"}
           </span>
         </a>
 
         {/* Desktop nav */}
-        <nav ref={dropdownRef} className="hidden md:flex items-center gap-7">
+        <nav ref={dropdownRef} className="hidden md:flex items-center gap-6">
           {links.map((link) =>
             link.children ? (
               <div key={link.label} className="relative">
                 <button
                   onClick={() => setOpenDropdown(openDropdown === link.label ? null : link.label)}
-                  className="flex items-center gap-1 text-sm text-[#516254] hover:text-[#121613] transition-colors duration-200"
+                  className="flex items-center gap-1 text-sm text-[#B8A58F] hover:text-[#C58A45] transition-colors duration-200"
                 >
                   {link.label}
                   <ChevronDown
-                    size={13}
+                    size={14}
                     className={cn("transition-transform duration-200", openDropdown === link.label ? "rotate-180" : "")}
                   />
                 </button>
                 {openDropdown === link.label && (
                   <div
                     className={cn(
-                      "absolute top-full mt-2 bg-[#fafffa] border border-[#121613]/10 rounded-xl overflow-hidden shadow-sm min-w-[140px]",
+                      "absolute top-full mt-2 bg-[#120E0A] border border-[rgba(244,233,216,0.12)] rounded-lg overflow-hidden shadow-lg min-w-[140px]",
                       isRtl ? "right-0" : "left-0"
                     )}
                   >
@@ -113,7 +112,7 @@ export default function Header() {
                         key={child.href}
                         href={child.href}
                         onClick={() => setOpenDropdown(null)}
-                        className="block px-4 py-2.5 text-sm text-[#516254] hover:text-[#121613] hover:bg-[#121613]/4 transition-colors whitespace-nowrap"
+                        className="block px-4 py-2.5 text-sm text-[#B8A58F] hover:text-[#C58A45] hover:bg-[rgba(244,233,216,0.05)] transition-colors whitespace-nowrap"
                       >
                         {child.label}
                       </Link>
@@ -125,7 +124,7 @@ export default function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-[#516254] hover:text-[#121613] transition-colors duration-200"
+                className="text-sm text-[#B8A58F] hover:text-[#C58A45] transition-colors duration-200"
               >
                 {link.label}
               </a>
@@ -138,7 +137,7 @@ export default function Header() {
           <SoundToggle />
           <LanguageSwitcher />
           <button
-            className="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-[#121613]/12 text-[#516254] hover:text-[#121613] transition-colors"
+            className="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-[rgba(244,233,216,0.12)] text-[#B8A58F] hover:text-[#C58A45] transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -149,12 +148,12 @@ export default function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-[#fafffa]/98 backdrop-blur-md border-b border-[#121613]/8 px-6 pb-6">
+        <div className="md:hidden bg-[#080604]/98 backdrop-blur-md border-b border-[rgba(244,233,216,0.1)] px-6 pb-6">
           <nav className="flex flex-col gap-4 pt-2">
             {links.map((link) =>
               link.children ? (
-                <div key={link.label} className="border-b border-[#121613]/6">
-                  <p className="text-xs text-[#2bee4b] font-semibold py-1 tracking-wide">
+                <div key={link.label} className="border-b border-[rgba(244,233,216,0.06)]">
+                  <p className="text-xs text-[#C58A45] font-semibold py-1 tracking-wide">
                     {link.label}
                   </p>
                   {link.children.map((child) => (
@@ -163,7 +162,7 @@ export default function Header() {
                       href={child.href}
                       onClick={() => setMenuOpen(false)}
                       className={cn(
-                        "block text-sm text-[#516254] hover:text-[#121613] transition-colors py-1.5",
+                        "block text-sm text-[#B8A58F] hover:text-[#C58A45] transition-colors py-1.5",
                         isRtl ? "pr-3" : "pl-3"
                       )}
                     >
@@ -176,7 +175,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="text-sm text-[#516254] hover:text-[#121613] transition-colors py-1 border-b border-[#121613]/6"
+                  className="text-sm text-[#B8A58F] hover:text-[#C58A45] transition-colors py-1 border-b border-[rgba(244,233,216,0.06)]"
                 >
                   {link.label}
                 </a>

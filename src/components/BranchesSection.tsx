@@ -50,16 +50,16 @@ export default function BranchesSection() {
     <section
       id="branches"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#f0f4f0]"
+      className="relative py-28 px-6 bg-[#080604]"
     >
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#C58A45]/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto">
         <div ref={headerRef} className="text-center mb-16">
-          <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
             {copy.headline}
           </h2>
-          <p className="text-[#516254] text-lg">{copy.subtext}</p>
+          <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
         </div>
 
         <div
@@ -78,13 +78,13 @@ export default function BranchesSection() {
             return (
               <div
                 key={branch.id}
-                className="group flex flex-col rounded-2xl bg-[#fafffa] border border-[#121613]/8 hover:border-[#2bee4b]/40 transition-all duration-300 overflow-hidden"
+                className="group flex flex-col rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)] hover:border-[#C58A45]/30 transition-all duration-300 overflow-hidden"
               >
-                <div className="w-full h-44 bg-[#f0f4f0] flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#2bee4b]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="flex flex-col items-center gap-2 text-[#516254]/50">
-                    <div className="w-12 h-12 rounded-xl border border-[#121613]/15 flex items-center justify-center">
-                      <div className="w-6 h-6 rounded border-2 border-[#121613]/20" />
+                <div className="w-full h-44 bg-gradient-to-br from-[#1A1208] to-[#0E0A06] flex items-center justify-center relative overflow-hidden flex-shrink-0">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#C58A45]/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="flex flex-col items-center gap-2 text-[#B8A58F]/50">
+                    <div className="w-12 h-12 rounded-xl border border-[#C58A45]/20 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded border-2 border-[#C58A45]/30" />
                     </div>
                     <span className="text-xs">{name.split("—")[0].trim()}</span>
                   </div>
@@ -92,25 +92,25 @@ export default function BranchesSection() {
 
                 <div className="p-5 flex flex-col gap-3 flex-1">
                   <div>
-                    <h3 className="font-bold text-[#121613] leading-snug text-sm mb-2">{name}</h3>
-                    <span className="inline-block px-3 py-0.5 bg-[#2bee4b]/10 border border-[#2bee4b]/20 text-[#121613] rounded-full text-xs font-medium">
+                    <h3 className="font-bold text-[#F4E9D8] leading-snug text-sm mb-2">{name}</h3>
+                    <span className="inline-block px-3 py-0.5 bg-[#C58A45]/10 border border-[#C58A45]/20 text-[#C58A45] rounded-full text-xs font-medium">
                       {type}
                     </span>
                   </div>
 
-                  <div className="flex gap-2 items-start text-xs text-[#516254]">
-                    <MapPin size={12} className="text-[#2bee4b] shrink-0 mt-0.5" />
+                  <div className="flex gap-2 items-start text-xs text-[#B8A58F]">
+                    <MapPin size={12} className="text-[#C58A45]/60 shrink-0 mt-0.5" />
                     <span className="leading-relaxed">{address}</span>
                   </div>
 
-                  <div className="flex gap-2 items-center text-xs text-[#516254]">
-                    <Phone size={12} className="text-[#2bee4b] shrink-0" />
+                  <div className="flex gap-2 items-center text-xs text-[#B8A58F]">
+                    <Phone size={12} className="text-[#C58A45]/60 shrink-0" />
                     <span dir="ltr">{phone}</span>
                   </div>
 
                   <div className="flex gap-2 items-center text-xs">
-                    <Clock size={12} className="text-[#2bee4b] shrink-0" />
-                    <span className="text-[#121613] font-medium">{hours}</span>
+                    <Clock size={12} className="text-[#C58A45]/60 shrink-0" />
+                    <span className="text-[#C58A45]">{hours}</span>
                   </div>
 
                   {features.length > 0 && (
@@ -118,7 +118,7 @@ export default function BranchesSection() {
                       {features.map((f, i) => (
                         <span
                           key={i}
-                          className="px-2 py-0.5 bg-[#c8d2c8]/50 border border-[#121613]/10 text-[#516254] rounded-full text-[10px]"
+                          className="px-2 py-0.5 bg-[#1A2540]/60 border border-[#2A3A60]/40 text-[#8AABDF] rounded-full text-[10px]"
                         >
                           {f}
                         </span>
@@ -127,8 +127,8 @@ export default function BranchesSection() {
                   )}
 
                   {note && (
-                    <div className="flex gap-2 items-start px-3 py-2 bg-[#2bee4b]/8 border border-[#2bee4b]/20 rounded-xl text-xs text-[#516254]">
-                      <AlertTriangle size={11} className="shrink-0 mt-0.5 text-[#2bee4b]" />
+                    <div className="flex gap-2 items-start px-3 py-2 bg-[#C58A45]/8 border border-[#C58A45]/20 rounded-xl text-xs text-[#C58A45]/80">
+                      <AlertTriangle size={11} className="shrink-0 mt-0.5" />
                       <span>{note}</span>
                     </div>
                   )}
@@ -136,7 +136,7 @@ export default function BranchesSection() {
                   <div className="flex gap-2 mt-auto pt-2">
                     <a
                       href={`tel:${branch.phone}`}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#2bee4b]/10 border border-[#2bee4b]/25 hover:bg-[#2bee4b]/20 hover:border-[#2bee4b]/45 text-[#121613] rounded-xl text-xs font-medium transition-all duration-200"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-emerald-900/40 border border-emerald-700/40 hover:bg-emerald-800/50 hover:border-emerald-600/50 text-emerald-400 rounded-xl text-xs font-medium transition-all duration-200"
                     >
                       <Phone size={12} />
                       {copy.call}
@@ -147,7 +147,7 @@ export default function BranchesSection() {
                         href={branch.mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#121613]/6 border border-[#121613]/12 hover:bg-[#121613]/12 text-[#121613] rounded-xl text-xs font-medium transition-all duration-200"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#C58A45]/15 border border-[#C58A45]/30 hover:bg-[#C58A45]/25 text-[#C58A45] rounded-xl text-xs font-medium transition-all duration-200"
                       >
                         <Map size={12} />
                         {copy.map}
@@ -156,7 +156,7 @@ export default function BranchesSection() {
                       <button
                         disabled
                         title={copy.mapComingSoon}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#f0f4f0] border border-[#121613]/8 text-[#516254]/40 rounded-xl text-xs font-medium cursor-not-allowed"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#120E0A] border border-[rgba(244,233,216,0.06)] text-[#B8A58F]/40 rounded-xl text-xs font-medium cursor-not-allowed"
                       >
                         <Map size={12} />
                         {copy.map}
