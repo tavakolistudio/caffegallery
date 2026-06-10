@@ -1,14 +1,9 @@
 "use client"
-import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
-
-const CafeGalleryScene = dynamic(
-  () => import("@/components/three/CafeGalleryScene"),
-  { ssr: false }
-)
+import ShaderBackground from "@/components/ShaderBackground"
 
 export default function Hero() {
   const { lang, isRtl } = useLang()
@@ -20,9 +15,9 @@ export default function Hero() {
       dir={isRtl ? "rtl" : "ltr"}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080604]"
     >
-      {/* Three.js background */}
-      <div className="absolute inset-0 z-0 opacity-60">
-        <CafeGalleryScene />
+      {/* WebGL shader background */}
+      <div className="absolute inset-0 z-0">
+        <ShaderBackground />
       </div>
 
       {/* Gradient overlays */}
