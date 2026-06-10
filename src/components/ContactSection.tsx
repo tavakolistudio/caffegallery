@@ -101,106 +101,118 @@ export default function ContactSection() {
   ]
 
   return (
-    <section
-      id="contact"
-      dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#0C0906] overflow-hidden"
-    >
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#C58A45]/30 to-transparent" />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#C58A45]/5 rounded-full blur-[120px] pointer-events-none" />
+    <>
+      {/* Contact section — light */}
+      <section
+        id="contact"
+        dir={isRtl ? "rtl" : "ltr"}
+        className="relative py-28 px-6 bg-[#fafffa] overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div ref={headerRef} className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
-            {copy.headline}
-          </h2>
-          <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Contact cards */}
-          <div ref={cardsRef} className="flex flex-col gap-4">
-            {contactCards.map((card, i) => {
-              const Icon = card.icon
-              const Inner = (
-                <div
-                  className={`flex items-center gap-4 p-5 rounded-2xl bg-[#120E0A] border transition-all duration-200 ${
-                    card.available
-                      ? "border-[rgba(244,233,216,0.1)] hover:border-[#C58A45]/35 cursor-pointer"
-                      : "border-[rgba(244,233,216,0.06)] opacity-50"
-                  }`}
-                >
-                  <div className="w-12 h-12 rounded-xl bg-[#C58A45]/10 border border-[#C58A45]/20 flex items-center justify-center flex-shrink-0">
-                    <Icon size={20} className="text-[#C58A45]" />
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-xs text-[#B8A58F]">{card.label}</span>
-                    <span
-                      className={`font-semibold ${card.available ? "text-[#F4E9D8]" : "text-[#B8A58F]"}`}
-                      dir={lang === "fa" && card.href?.startsWith("tel") ? "ltr" : undefined}
-                    >
-                      {card.value}
-                    </span>
-                  </div>
-                </div>
-              )
-
-              return card.href && card.available ? (
-                <a
-                  key={i}
-                  href={card.href}
-                  target={card.href.startsWith("http") ? "_blank" : undefined}
-                  rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                >
-                  {Inner}
-                </a>
-              ) : (
-                <div key={i}>{Inner}</div>
-              )
-            })}
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div ref={headerRef} className="text-center mb-16">
+            <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
+              {copy.headline}
+            </h2>
+            <p className="text-[#516254] text-lg">{copy.subtext}</p>
           </div>
 
-          {/* Contact form */}
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-4 p-6 rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)]"
-          >
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={copy.name}
-              className="w-full px-4 py-3 bg-[#0C0906] border border-[rgba(244,233,216,0.1)] rounded-xl text-[#F4E9D8] placeholder-[#B8A58F]/50 text-sm focus:outline-none focus:border-[#C58A45]/50 transition-colors"
-            />
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder={copy.message}
-              rows={5}
-              className="w-full px-4 py-3 bg-[#0C0906] border border-[rgba(244,233,216,0.1)] rounded-xl text-[#F4E9D8] placeholder-[#B8A58F]/50 text-sm focus:outline-none focus:border-[#C58A45]/50 transition-colors resize-none"
-            />
-            <button
-              type="submit"
-              className="flex items-center justify-center gap-2 py-3.5 bg-[#C58A45] hover:bg-[#D7A85B] text-[#080604] font-bold rounded-xl transition-all duration-200 text-sm"
-            >
-              <Send size={15} />
-              {copy.send}
-            </button>
-          </form>
-        </div>
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            {/* Contact cards */}
+            <div ref={cardsRef} className="flex flex-col gap-4">
+              {contactCards.map((card, i) => {
+                const Icon = card.icon
+                const Inner = (
+                  <div
+                    className={`flex items-center gap-4 p-5 rounded-2xl bg-[#f0f4f0] border transition-all duration-200 ${
+                      card.available
+                        ? "border-[#121613]/8 hover:border-[#2bee4b]/35 cursor-pointer"
+                        : "border-[#121613]/6 opacity-50"
+                    }`}
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-[#2bee4b]/10 border border-[#2bee4b]/20 flex items-center justify-center flex-shrink-0">
+                      <Icon size={20} className="text-[#121613]" />
+                    </div>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-xs text-[#516254]">{card.label}</span>
+                      <span
+                        className={`font-semibold ${card.available ? "text-[#121613]" : "text-[#516254]"}`}
+                        dir={lang === "fa" && card.href?.startsWith("tel") ? "ltr" : undefined}
+                      >
+                        {card.value}
+                      </span>
+                    </div>
+                  </div>
+                )
 
-        <div
-          ref={footerRef}
-          className="text-center mt-20 pt-8 border-t border-[rgba(244,233,216,0.06)]"
-        >
-          <p className="text-[#B8A58F]/60 text-sm">
+                return card.href && card.available ? (
+                  <a
+                    key={i}
+                    href={card.href}
+                    target={card.href.startsWith("http") ? "_blank" : undefined}
+                    rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  >
+                    {Inner}
+                  </a>
+                ) : (
+                  <div key={i}>{Inner}</div>
+                )
+              })}
+            </div>
+
+            {/* Contact form */}
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4 p-6 rounded-2xl bg-[#f0f4f0] border border-[#121613]/8"
+            >
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={copy.name}
+                className="w-full px-4 py-3 bg-[#fafffa] border border-[#121613]/10 rounded-xl text-[#121613] placeholder-[#516254]/50 text-sm focus:outline-none focus:border-[#2bee4b]/50 transition-colors"
+              />
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={copy.message}
+                rows={5}
+                className="w-full px-4 py-3 bg-[#fafffa] border border-[#121613]/10 rounded-xl text-[#121613] placeholder-[#516254]/50 text-sm focus:outline-none focus:border-[#2bee4b]/50 transition-colors resize-none"
+              />
+              <button
+                type="submit"
+                className="flex items-center justify-center gap-2 py-3.5 bg-[#2bee4b] hover:bg-[#20cc3e] text-[#121613] font-bold rounded-xl transition-all duration-200 text-sm"
+              >
+                <Send size={15} />
+                {copy.send}
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Obsidian footer panel */}
+      <footer
+        dir={isRtl ? "rtl" : "ltr"}
+        className="bg-[#121613] px-6 py-12"
+      >
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-[#2bee4b] font-bold text-lg">{lang === "fa" ? "کافه" : "Caffe"}</span>
+            <span className="text-[#fafffa] font-bold text-lg">{lang === "fa" ? "گالری" : "gallery"}</span>
+          </div>
+          <p className="text-[#516254] text-sm text-center">
             {lang === "fa"
               ? `© ${new Date().getFullYear()} کافه گالری — ${siteData.brand.manager.fa}`
               : `© ${new Date().getFullYear()} Caffegallery — ${siteData.brand.manager.en}`}
           </p>
+          <p className="text-[#516254]/50 text-xs tracking-[0.3em] uppercase">
+            Designed by <span className="text-[#2bee4b]">TAVAKOLISTUDIO</span>
+          </p>
         </div>
-      </div>
-    </section>
+      </footer>
+    </>
   )
 }

@@ -30,8 +30,9 @@ export default function GallerySection() {
     <section
       id="gallery"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#0C0906]"
+      className="relative py-28 px-6 bg-[#fafffa]"
     >
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -41,10 +42,10 @@ export default function GallerySection() {
           transition={{ duration: 0.7 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
+          <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
             {copy.headline}
           </h2>
-          <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
+          <p className="text-[#516254] text-lg">{copy.subtext}</p>
         </motion.div>
 
         {/* Filter chips */}
@@ -55,8 +56,8 @@ export default function GallerySection() {
               onClick={() => setActive(cat)}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                 active === cat
-                  ? "bg-[#C58A45] text-[#080604]"
-                  : "bg-[#120E0A] border border-[rgba(244,233,216,0.12)] text-[#B8A58F] hover:border-[#C58A45]/40 hover:text-[#F4E9D8]"
+                  ? "bg-[#2bee4b] text-[#121613]"
+                  : "bg-[#f0f4f0] border border-[#121613]/10 text-[#516254] hover:border-[#2bee4b]/40 hover:text-[#121613]"
               }`}
             >
               {categoryLabel[cat]}
@@ -81,21 +82,20 @@ export default function GallerySection() {
                 className="break-inside-avoid cursor-pointer group"
                 onClick={() => setLightbox(item.image)}
               >
-                <div className="relative overflow-hidden rounded-2xl border border-[rgba(244,233,216,0.08)] group-hover:border-[#C58A45]/40 transition-all duration-300">
+                <div className="relative overflow-hidden rounded-[14px] border border-[#121613]/8 group-hover:border-[#2bee4b]/40 transition-all duration-300">
                   <img
                     src={item.image}
                     alt={lang === "fa" ? item.titleFa : item.titleEn}
-                    className="w-full h-56 object-cover block"
+                    className="w-full h-56 object-cover block grayscale group-hover:grayscale-0 transition-all duration-500"
                     loading="lazy"
                   />
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[#080604]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
-                    <span className="text-[#F4E9D8] text-sm font-medium drop-shadow">
+                  <div className="absolute inset-0 bg-[#121613]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
+                    <span className="text-[#fafffa] text-sm font-medium drop-shadow">
                       {lang === "fa" ? item.titleFa : item.titleEn}
                     </span>
                   </div>
-                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#080604]/70 border border-[#C58A45]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C58A45" strokeWidth="2">
+                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#fafffa]/90 border border-[#2bee4b]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#121613" strokeWidth="2">
                       <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
                     </svg>
                   </div>
@@ -113,11 +113,11 @@ export default function GallerySection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-[#080604]/95 flex items-center justify-center p-8 backdrop-blur-md"
+            className="fixed inset-0 z-[100] bg-[#121613]/85 flex items-center justify-center p-8 backdrop-blur-md"
             onClick={() => setLightbox(null)}
           >
             <button
-              className="absolute top-6 right-6 w-10 h-10 rounded-full border border-[rgba(244,233,216,0.2)] flex items-center justify-center text-[#B8A58F] hover:text-[#F4E9D8] hover:border-[#C58A45] transition-all"
+              className="absolute top-6 right-6 w-10 h-10 rounded-full border border-[#fafffa]/20 flex items-center justify-center text-[#fafffa]/70 hover:text-[#fafffa] hover:border-[#2bee4b] transition-all"
               onClick={() => setLightbox(null)}
             >
               <X size={18} />
@@ -126,13 +126,13 @@ export default function GallerySection() {
               initial={{ scale: 0.85 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.85 }}
-              className="max-w-3xl w-full rounded-2xl overflow-hidden border border-[rgba(244,233,216,0.15)]"
+              className="max-w-3xl w-full rounded-2xl overflow-hidden border border-[#fafffa]/15"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={lightbox}
                 alt=""
-                className="w-full max-h-[80vh] object-contain bg-[#0C0906] block"
+                className="w-full max-h-[80vh] object-contain bg-[#121613] block"
               />
             </motion.div>
           </motion.div>

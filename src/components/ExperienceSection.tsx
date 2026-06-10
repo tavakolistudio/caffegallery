@@ -52,14 +52,15 @@ export default function ExperienceSection() {
     <section
       id="experience"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative py-28 px-6 bg-[#080604]"
+      className="relative py-28 px-6 bg-[#f0f4f0]"
     >
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[#121613]/8" />
       <div className="max-w-7xl mx-auto">
         <div ref={headerRef} className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#F4E9D8] mb-4">
+          <h2 className="font-display text-[clamp(2rem,4.5vw,3rem)] font-bold text-[#121613] mb-4 leading-tight">
             {copy.headline}
           </h2>
-          <p className="text-[#B8A58F] text-lg">{copy.subtext}</p>
+          <p className="text-[#516254] text-lg">{copy.subtext}</p>
         </div>
 
         <div
@@ -71,15 +72,15 @@ export default function ExperienceSection() {
             return (
               <div
                 key={i}
-                className="group relative flex flex-col gap-4 p-6 rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)] hover:border-[#C58A45]/40 transition-all duration-300 hover:bg-[#1A1208] cursor-default"
+                className="group relative flex flex-col gap-4 p-6 rounded-2xl bg-[#fafffa] border border-[#121613]/8 hover:border-[#2bee4b]/50 transition-all duration-300 cursor-default"
               >
-                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-[#C58A45]/5 to-transparent" />
-                <div className="relative w-10 h-10 rounded-xl bg-[#C58A45]/10 border border-[#C58A45]/20 flex items-center justify-center group-hover:bg-[#C58A45]/20 transition-colors">
-                  <Icon size={18} className="text-[#C58A45]" />
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-[#2bee4b]/5 to-transparent" />
+                <div className="relative w-10 h-10 rounded-xl bg-[#2bee4b]/10 border border-[#2bee4b]/20 flex items-center justify-center group-hover:bg-[#2bee4b]/20 transition-colors">
+                  <Icon size={18} className="text-[#121613]" />
                 </div>
                 <div className="relative">
-                  <h3 className="font-semibold text-[#F4E9D8] mb-1.5">{card.title}</h3>
-                  <p className="text-sm text-[#B8A58F] leading-relaxed">{card.desc}</p>
+                  <h3 className="font-semibold text-[#121613] mb-1.5">{card.title}</h3>
+                  <p className="text-sm text-[#516254] leading-relaxed">{card.desc}</p>
                 </div>
               </div>
             )
