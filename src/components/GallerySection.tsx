@@ -82,22 +82,22 @@ export default function GallerySection() {
                 onClick={() => setLightbox(item.image)}
               >
                 <div className="relative overflow-hidden rounded-2xl border border-[rgba(244,233,216,0.08)] group-hover:border-[#C58A45]/40 transition-all duration-300">
-                  {/* Placeholder with gradient */}
-                  <div className="w-full h-56 bg-gradient-to-br from-[#1A1208] to-[#120E0A] flex flex-col items-center justify-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-[#C58A45]/10 border border-[#C58A45]/20 flex items-center justify-center">
-                      <div className="w-5 h-5 rounded border-2 border-[#C58A45]/50" />
-                    </div>
-                    <span className="text-xs text-[#B8A58F]">
+                  <img
+                    src={item.image}
+                    alt={lang === "fa" ? item.titleFa : item.titleEn}
+                    className="w-full h-56 object-cover block"
+                    loading="lazy"
+                  />
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-[#080604]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-4">
+                    <span className="text-[#F4E9D8] text-sm font-medium drop-shadow">
                       {lang === "fa" ? item.titleFa : item.titleEn}
                     </span>
                   </div>
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[#C58A45]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <div className="w-10 h-10 rounded-full bg-[#080604]/80 border border-[#C58A45] flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C58A45" strokeWidth="2">
-                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                      </svg>
-                    </div>
+                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-[#080604]/70 border border-[#C58A45]/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C58A45" strokeWidth="2">
+                      <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                    </svg>
                   </div>
                 </div>
               </motion.div>
@@ -129,11 +129,11 @@ export default function GallerySection() {
               className="max-w-3xl w-full rounded-2xl overflow-hidden border border-[rgba(244,233,216,0.15)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-full h-80 bg-gradient-to-br from-[#1A1208] to-[#120E0A] flex items-center justify-center">
-                <div className="text-[#B8A58F] text-sm">
-                  {lang === "fa" ? "تصویر در دسترس نیست" : "Image not available"}
-                </div>
-              </div>
+              <img
+                src={lightbox}
+                alt=""
+                className="w-full max-h-[80vh] object-contain bg-[#0C0906] block"
+              />
             </motion.div>
           </motion.div>
         )}

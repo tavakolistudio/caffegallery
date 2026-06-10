@@ -9,12 +9,14 @@ import ConsultingSection from "@/components/ConsultingSection"
 import AboutSection from "@/components/AboutSection"
 import ContactSection from "@/components/ContactSection"
 import ScrollProgress from "@/components/ScrollProgress"
+import ParallaxDeco from "@/components/ParallaxDeco"
 import { useLang } from "@/lib/i18n"
 
 export default function Home() {
   const { lang, isRtl } = useLang()
   return (
     <div dir={isRtl ? "rtl" : "ltr"} lang={lang} className="bg-[#080604] text-[#F4E9D8] min-h-screen">
+      <ParallaxDeco />
       <ScrollProgress />
       <Header />
       <Hero />
