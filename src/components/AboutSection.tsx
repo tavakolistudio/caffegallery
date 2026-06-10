@@ -23,7 +23,7 @@ export default function AboutSection() {
         headlineRef.current,
         bodyRef.current,
         cardRef.current,
-      ].filter((el): el is HTMLElement => el !== null)
+      ].filter(Boolean) as HTMLElement[]
 
       if (targets.length && badgeRef.current) {
         gsap.fromTo(
