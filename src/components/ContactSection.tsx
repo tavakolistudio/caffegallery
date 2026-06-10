@@ -63,8 +63,7 @@ export default function ContactSection() {
       )
     })
 
-      ScrollTrigger.refresh()
-    })
+    ScrollTrigger.refresh()
 
     return () => ctx.revert()
   }, [])

@@ -40,8 +40,7 @@ export default function AboutSection() {
       }
     })
 
-      ScrollTrigger.refresh()
-    })
+    ScrollTrigger.refresh()
 
     return () => ctx.revert()
   }, [])
