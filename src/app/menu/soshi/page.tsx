@@ -76,12 +76,14 @@ export default function SoshiMenuPage() {
               <span>دسته‌بندی‌ها</span>
             </button>
           ) : (
-            <span
-              className="text-xs font-semibold tracking-[0.2em]"
+            <Link
+              href="/"
+              className="flex items-center gap-1 text-xs font-semibold transition-opacity hover:opacity-70"
               style={{ color: "#516254" }}
             >
-              CAFFEGALLERY
-            </span>
+              <span className="text-sm leading-none">⌂</span>
+              <span>صفحه اصلی</span>
+            </Link>
           )}
 
           {/* Center title — tap to go home */}
