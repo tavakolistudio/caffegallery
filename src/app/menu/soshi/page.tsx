@@ -29,6 +29,12 @@ export default function SoshiMenuPage() {
     return counts
   }, [])
 
+  // only categories that have at least one item
+  const activeCategories = useMemo(
+    () => menuCategories.filter(cat => categoryItemCounts[cat.id] > 0),
+    [categoryItemCounts],
+  )
+
   const filtered = useMemo(() => {
     if (isSearching) {
       const q = search.trim().toLowerCase()
@@ -160,7 +166,7 @@ export default function SoshiMenuPage() {
               — انتخاب دسته‌بندی —
             </p>
             <div className="grid grid-cols-2 gap-3">
-              {menuCategories.map(cat => (
+              {activeCategories.map(cat => (
                 <button
                   key={cat.id}
                   onClick={() => setScreen(cat.id)}
@@ -187,7 +193,7 @@ export default function SoshiMenuPage() {
             {/* Quick category switcher */}
             <div className="overflow-x-auto mb-4 pt-1" style={{ scrollbarWidth: "none" }}>
               <div className="flex gap-2" style={{ width: "max-content" }}>
-                {menuCategories.map(cat => (
+                {activeCategories.map(cat => (
                   <button
                     key={cat.id}
                     onClick={() => setScreen(cat.id)}
