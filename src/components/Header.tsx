@@ -20,7 +20,10 @@ const navLinks: Record<"fa" | "en", NavLink[]> = {
     {
       label: "منو",
       href: null,
-      children: [{ label: "منو سوشی", href: "/menu/soshi" }],
+      children: [
+        { label: "منو سوشی", href: "/menu/soshi" },
+        { label: "منو کوروش", href: "/menu/korush" },
+      ],
     },
     { label: "درباره ما", href: "#about" },
     { label: "تماس با ما", href: "#contact" },
@@ -32,7 +35,10 @@ const navLinks: Record<"fa" | "en", NavLink[]> = {
     {
       label: "Menu",
       href: null,
-      children: [{ label: "Sushi Menu", href: "/menu/soshi" }],
+      children: [
+        { label: "Sushi Menu", href: "/menu/soshi" },
+        { label: "Korush Menu", href: "/menu/korush" },
+      ],
     },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
