@@ -52,6 +52,10 @@ body {
   color: #F4E9D8;
 }
 
+/* Hide scrollbar for category tabs */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Glass card base */
 .glass {
   background: rgba(18, 14, 10, 0.7);

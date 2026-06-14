@@ -2,31 +2,56 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, Search, X } from "lucide-react"
 import { menuBrands, menuItems } from "../../../../korush/src/data/menu-data"
 import { formatToman } from "../../../../korush/src/lib/format-price"
 import type { BrandId, MenuItem, MenuBrand } from "../../../../korush/src/types/menu"
 
-// ─── Inline helpers (avoid importing korush files that use @/ paths) ──────────
+// ─── Category → image map ─────────────────────────────────────────────────────
+
+const CATEGORY_IMAGE: Record<string, string> = {
+  "قهوه":                       "/images/menu/korush/cat-coffee.webp",
+  "نوشیدنی‌های سرد بر پایه قهوه": "/images/menu/korush/cat-cold-coffee.webp",
+  "نوشیدنی‌های گرم":             "/images/menu/korush/cat-hot-drink.webp",
+  "نوشیدنی‌های سرد":             "/images/menu/korush/cat-cold-drink.webp",
+  "چای و دمنوش":                 "/images/menu/korush/cat-tea.webp",
+  "شیک و فراپه":                 "/images/menu/korush/cat-frappe.webp",
+  "کیک و دسر":                   "/images/menu/korush/cat-cake.webp",
+  "سوشی و رول":                  "/images/menu/korush/cat-sushi.webp",
+  "سالاد":                       "/images/menu/korush/cat-salad.webp",
+  "سوپ":                         "/images/menu/korush/cat-soup.webp",
+  "پیش‌غذا":                     "/images/menu/korush/cat-appetizer.webp",
+  "نودل":                        "/images/menu/korush/cat-noodle.webp",
+  "خوراک تام یام":               "/images/menu/korush/cat-tomyum.webp",
+  "چاپ‌سویی":                    "/images/menu/korush/cat-chopsuey.webp",
+  "هیباچی برنج سرخ‌شده":         "/images/menu/korush/cat-hibachi.webp",
+  "کاری طلایی ژاپنی":            "/images/menu/korush/cat-curry-golden.webp",
+  "کاری قرمز تایلندی":           "/images/menu/korush/cat-curry-red.webp",
+  "خوراک تایلندی":               "/images/menu/korush/cat-thai.webp",
+  "خوراک تریاکی":                "/images/menu/korush/cat-teriyaki.webp",
+  "خوراک ساچبال":                "/images/menu/korush/cat-sachbal.webp",
+  "خوراک چیلی":                  "/images/menu/korush/cat-chili.webp",
+  "خوراک بروکلی":                "/images/menu/korush/cat-broccoli.webp",
+  "جاجانگ‌میون":                 "/images/menu/korush/cat-jajang.webp",
+  "بشقاب سبزیجات":               "/images/menu/korush/cat-veggies.webp",
+  "پاستا":                       "/images/menu/korush/cat-pasta.webp",
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function normalizePersian(text: string): string {
   return text.replace(/‌/g, " ").replace(/\s+/g, " ").trim().toLowerCase()
 }
 
-function filterItems(
-  items: readonly MenuItem[],
-  query: string,
-  category: string,
-): MenuItem[] {
+function filterItems(items: readonly MenuItem[], query: string, category: string): MenuItem[] {
   let result = items as MenuItem[]
   if (category !== "همه") result = result.filter((i) => i.category === category)
   const q = query.trim()
   if (q) {
     const nq = normalizePersian(q)
     result = result.filter((i) =>
-      normalizePersian(
-        [i.name, i.category, i.description ?? "", i.variant ?? ""].join(" "),
-      ).includes(nq),
+      normalizePersian([i.name, i.category, i.description ?? "", i.variant ?? ""].join(" ")).includes(nq)
     )
   }
   return result
@@ -36,48 +61,58 @@ function toPersianNum(n: number): string {
   return n.toLocaleString("fa-IR")
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// ─── Item card ────────────────────────────────────────────────────────────────
 
 function ItemCard({ item, brand }: { item: MenuItem; brand: MenuBrand }) {
   const accent = brand.accent
+  const img = CATEGORY_IMAGE[item.category]
+
   return (
     <article
-      className="flex flex-col rounded-2xl border overflow-hidden transition-all duration-200 hover:-translate-y-0.5"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.04)",
-        borderColor: `${accent}20`,
-      }}
+      className="flex flex-col rounded-2xl overflow-hidden border transition-all duration-200 active:scale-[0.98]"
+      style={{ backgroundColor: "rgba(255,255,255,0.04)", borderColor: `${accent}22` }}
     >
-      <div className="h-[3px]" style={{ backgroundColor: accent }} />
-      <div className="flex flex-col flex-1 p-4 gap-2">
-        <span
-          className="self-start text-[11px] px-2.5 py-0.5 rounded-full font-medium"
-          style={{ backgroundColor: `${accent}18`, color: accent }}
-        >
-          {item.category}
-        </span>
-        <h3 className="text-sm font-semibold leading-snug text-[#F4E9D8]">
-          {item.name}
-        </h3>
+      {/* Image */}
+      {img && (
+        <div className="relative w-full aspect-square overflow-hidden">
+          <Image
+            src={img}
+            alt={item.category}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover"
+            style={{ filter: "brightness(0.85)" }}
+          />
+          {/* gradient overlay */}
+          <div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(to top, ${brand.background ?? "#0D1117"}cc 0%, transparent 60%)` }}
+          />
+          {/* category chip */}
+          <span
+            className="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded-full font-semibold"
+            style={{ backgroundColor: `${accent}cc`, color: "#fff" }}
+          >
+            {item.category}
+          </span>
+        </div>
+      )}
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 px-3 py-2.5 gap-1.5">
+        <h3 className="text-[13px] font-bold leading-snug text-[#F4E9D8]">{item.name}</h3>
         {item.variant && (
-          <p className="text-xs text-[#B8A58F]">{item.variant}</p>
+          <p className="text-[11px] text-[#B8A58F] leading-tight">{item.variant}</p>
         )}
         {item.description && (
-          <p className="text-[11px] text-[#8A7B68] leading-relaxed line-clamp-2">
-            {item.description}
-          </p>
+          <p className="text-[10px] text-[#8A7B68] leading-relaxed line-clamp-2">{item.description}</p>
         )}
         <div className="flex-1" />
-        <div
-          className="flex items-center justify-between pt-2 border-t"
-          style={{ borderColor: `${accent}18` }}
-        >
+        <div className="flex items-center justify-between pt-1.5 border-t" style={{ borderColor: `${accent}18` }}>
           {item.amount ? (
-            <span className="text-[11px] text-[#8A7B68]">{item.amount}</span>
-          ) : (
-            <span />
-          )}
-          <span className="text-sm font-bold" style={{ color: accent }}>
+            <span className="text-[10px] text-[#8A7B68]">{item.amount}</span>
+          ) : <span />}
+          <span className="text-[13px] font-bold tabular-nums" style={{ color: accent }}>
             {formatToman(item.price)}
           </span>
         </div>
@@ -86,7 +121,7 @@ function ItemCard({ item, brand }: { item: MenuItem; brand: MenuBrand }) {
   )
 }
 
-// ─── Main page ─────────────────────────────────────────────────────────────────
+// ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function KorushMenuPage() {
   const brands = menuBrands as unknown as MenuBrand[]
@@ -100,12 +135,12 @@ export default function KorushMenuPage() {
 
   const brandItems = useMemo(
     () => allItems.filter((i) => i.brand === activeBrandId),
-    [activeBrandId],
+    [activeBrandId, allItems]
   )
 
   const filtered = useMemo(
     () => filterItems(brandItems, query, activeCategory),
-    [brandItems, query, activeCategory],
+    [brandItems, query, activeCategory]
   )
 
   function handleBrandChange(id: BrandId) {
@@ -118,41 +153,35 @@ export default function KorushMenuPage() {
   const isFiltered = query.trim() !== "" || activeCategory !== "همه"
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ backgroundColor: "#0D1117", color: "#F4E9D8" }}
-    >
-      {/* ── HEADER ────────────────────────────────────────────────────── */}
+    <div className="min-h-screen" style={{ backgroundColor: "#0D1117", color: "#F4E9D8" }}>
+
+      {/* ── HEADER ── */}
       <header
-        className="sticky top-0 z-20 flex items-center justify-between h-14 px-5 border-b backdrop-blur-sm"
-        style={{
-          backgroundColor: "rgba(13,17,23,0.92)",
-          borderColor: "rgba(244,233,216,0.08)",
-        }}
+        className="sticky top-0 z-20 flex items-center justify-between h-12 px-4 border-b backdrop-blur-sm"
+        style={{ backgroundColor: "rgba(13,17,23,0.95)", borderColor: "rgba(244,233,216,0.08)" }}
       >
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
+          className="flex items-center gap-1 text-xs font-semibold transition-opacity active:opacity-60"
           style={{ color: "#B8A58F" }}
-          aria-label="بازگشت به صفحه اصلی"
+          aria-label="بازگشت"
         >
-          <ArrowRight size={15} />
-          کافه گالری
+          <ArrowRight size={14} />
+          <span className="hidden sm:inline">کافه گالری</span>
         </Link>
         <h1 className="text-sm font-bold text-[#F4E9D8]">منو کوروش مال</h1>
-        <div className="w-20" aria-hidden />
+        <div className="w-14" aria-hidden />
       </header>
 
-      {/* ── BRAND TABS ────────────────────────────────────────────────── */}
+      {/* ── BRAND TABS ── */}
       <div
-        className="sticky top-14 z-10 px-5 pt-3 pb-0 backdrop-blur-sm"
-        style={{ backgroundColor: "rgba(13,17,23,0.95)" }}
+        className="sticky top-12 z-10 px-3 pt-2.5 backdrop-blur-sm"
+        style={{ backgroundColor: "rgba(13,17,23,0.97)" }}
       >
         <div
           className="flex rounded-xl p-1 gap-1"
-          style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+          style={{ backgroundColor: "rgba(255,255,255,0.06)" }}
           role="tablist"
-          aria-label="برندها"
         >
           {brands.map((brand) => {
             const active = brand.id === activeBrandId
@@ -162,10 +191,10 @@ export default function KorushMenuPage() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => handleBrandChange(brand.id)}
-                className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all duration-150 whitespace-nowrap"
+                className="flex-1 py-2 rounded-lg text-[11px] font-bold transition-all duration-150 whitespace-nowrap"
                 style={{
                   backgroundColor: active ? brand.accent : "transparent",
-                  color: active ? "#fff" : "rgba(244,233,216,0.5)",
+                  color: active ? "#fff" : "rgba(244,233,216,0.45)",
                 }}
               >
                 {brand.shortTitle}
@@ -175,9 +204,9 @@ export default function KorushMenuPage() {
         </div>
 
         {/* Search */}
-        <div className="relative mt-3">
+        <div className="relative mt-2">
           <Search
-            size={15}
+            size={14}
             className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
             style={{ color: activeBrand.accent, opacity: 0.7 }}
           />
@@ -185,37 +214,27 @@ export default function KorushMenuPage() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="جستجو در منو…"
-            className="w-full rounded-xl pr-9 pl-9 py-2.5 text-xs outline-none border border-transparent transition-all"
-            style={{
-              backgroundColor: "rgba(255,255,255,0.06)",
-              color: "#F4E9D8",
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = `${activeBrand.accent}50`
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.borderColor = "transparent"
-            }}
-            aria-label="جستجو در منو"
+            placeholder="جستجو…"
+            className="w-full rounded-xl pr-8 pl-8 py-2 text-xs outline-none border border-transparent transition-all"
+            style={{ backgroundColor: "rgba(255,255,255,0.07)", color: "#F4E9D8" }}
+            onFocus={(e) => { e.currentTarget.style.borderColor = `${activeBrand.accent}55` }}
+            onBlur={(e) => { e.currentTarget.style.borderColor = "transparent" }}
           />
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="absolute left-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-70"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
               aria-label="پاک کردن"
             >
-              <X size={14} style={{ color: "rgba(244,233,216,0.4)" }} />
+              <X size={13} style={{ color: "rgba(244,233,216,0.4)" }} />
             </button>
           )}
         </div>
 
         {/* Category tabs */}
         <div
-          className="flex gap-1.5 overflow-x-auto py-3"
-          style={{ scrollbarWidth: "none" }}
+          className="flex gap-1.5 overflow-x-auto py-2.5 no-scrollbar"
           role="tablist"
-          aria-label="دسته‌بندی‌ها"
         >
           {categories.map((cat) => {
             const active = cat === activeCategory
@@ -225,13 +244,10 @@ export default function KorushMenuPage() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setActiveCategory(cat)}
-                className="flex-shrink-0 px-3 rounded-full text-xs font-medium transition-all duration-150 whitespace-nowrap"
+                className="flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-150 whitespace-nowrap"
                 style={{
-                  minHeight: 36,
-                  backgroundColor: active
-                    ? activeBrand.accent
-                    : "rgba(255,255,255,0.07)",
-                  color: active ? "#fff" : "rgba(244,233,216,0.55)",
+                  backgroundColor: active ? activeBrand.accent : "rgba(255,255,255,0.07)",
+                  color: active ? "#fff" : "rgba(244,233,216,0.5)",
                 }}
               >
                 {cat}
@@ -241,9 +257,8 @@ export default function KorushMenuPage() {
         </div>
       </div>
 
-      {/* ── CONTENT ───────────────────────────────────────────────────── */}
-      <main className="px-5 pb-12">
-        {/* Result count */}
+      {/* ── CONTENT ── */}
+      <main className="px-3 pb-16">
         <p className="text-[11px] text-[#8A7B68] mb-3">
           {isFiltered
             ? `${toPersianNum(filtered.length)} از ${toPersianNum(brandItems.length)} آیتم`
@@ -251,14 +266,14 @@ export default function KorushMenuPage() {
         </p>
 
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
-            <Search size={36} style={{ color: activeBrand.accent, opacity: 0.3 }} />
+          <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+            <Search size={32} style={{ color: activeBrand.accent, opacity: 0.3 }} />
             <p className="text-sm text-[#8A7B68]">
               {query ? `نتیجه‌ای برای «${query}» پیدا نشد` : "آیتمی در این دسته موجود نیست"}
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
             {filtered.map((item) => (
               <ItemCard key={item.id} item={item} brand={activeBrand} />
             ))}
@@ -266,11 +281,7 @@ export default function KorushMenuPage() {
         )}
       </main>
 
-      {/* ── FOOTER NOTE ───────────────────────────────────────────────── */}
-      <p
-        className="text-center text-[11px] pb-8"
-        style={{ color: "rgba(184,165,143,0.35)" }}
-      >
+      <p className="text-center text-[10px] pb-6" style={{ color: "rgba(184,165,143,0.3)" }}>
         تمام قیمت‌ها به تومان است.
       </p>
     </div>
