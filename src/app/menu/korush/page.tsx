@@ -8,36 +8,6 @@ import { menuBrands, menuItems } from "../../../../korush/src/data/menu-data"
 import { formatToman } from "../../../../korush/src/lib/format-price"
 import type { BrandId, MenuItem, MenuBrand } from "../../../../korush/src/types/menu"
 
-// ─── Category → image map ─────────────────────────────────────────────────────
-
-const CATEGORY_IMAGE: Record<string, string> = {
-  "قهوه":                       "/images/menu/korush/cat-coffee.webp",
-  "نوشیدنی‌های سرد بر پایه قهوه": "/images/menu/korush/cat-cold-coffee.webp",
-  "نوشیدنی‌های گرم":             "/images/menu/korush/cat-hot-drink.webp",
-  "نوشیدنی‌های سرد":             "/images/menu/korush/cat-cold-drink.webp",
-  "چای و دمنوش":                 "/images/menu/korush/cat-tea.webp",
-  "شیک و فراپه":                 "/images/menu/korush/cat-frappe.webp",
-  "کیک و دسر":                   "/images/menu/korush/cat-cake.webp",
-  "سوشی و رول":                  "/images/menu/korush/cat-sushi.webp",
-  "سالاد":                       "/images/menu/korush/cat-salad.webp",
-  "سوپ":                         "/images/menu/korush/cat-soup.webp",
-  "پیش‌غذا":                     "/images/menu/korush/cat-appetizer.webp",
-  "نودل":                        "/images/menu/korush/cat-noodle.webp",
-  "خوراک تام یام":               "/images/menu/korush/cat-tomyum.webp",
-  "چاپ‌سویی":                    "/images/menu/korush/cat-chopsuey.webp",
-  "هیباچی برنج سرخ‌شده":         "/images/menu/korush/cat-hibachi.webp",
-  "کاری طلایی ژاپنی":            "/images/menu/korush/cat-curry-golden.webp",
-  "کاری قرمز تایلندی":           "/images/menu/korush/cat-curry-red.webp",
-  "خوراک تایلندی":               "/images/menu/korush/cat-thai.webp",
-  "خوراک تریاکی":                "/images/menu/korush/cat-teriyaki.webp",
-  "خوراک ساچبال":                "/images/menu/korush/cat-sachbal.webp",
-  "خوراک چیلی":                  "/images/menu/korush/cat-chili.webp",
-  "خوراک بروکلی":                "/images/menu/korush/cat-broccoli.webp",
-  "جاجانگ‌میون":                 "/images/menu/korush/cat-jajang.webp",
-  "بشقاب سبزیجات":               "/images/menu/korush/cat-veggies.webp",
-  "پاستا":                       "/images/menu/korush/cat-pasta.webp",
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function normalizePersian(text: string): string {
@@ -65,30 +35,29 @@ function toPersianNum(n: number): string {
 
 function ItemCard({ item, brand }: { item: MenuItem; brand: MenuBrand }) {
   const accent = brand.accent
-  const img = CATEGORY_IMAGE[item.category]
+  const [imgError, setImgError] = useState(false)
+  const imgSrc = `/images/menu/korush/${item.id}.webp`
 
   return (
     <article
       className="flex flex-col rounded-2xl overflow-hidden border transition-all duration-200 active:scale-[0.98]"
       style={{ backgroundColor: "rgba(255,255,255,0.04)", borderColor: `${accent}22` }}
     >
-      {/* Image */}
-      {img && (
+      {!imgError && (
         <div className="relative w-full aspect-square overflow-hidden">
           <Image
-            src={img}
-            alt={item.category}
+            src={imgSrc}
+            alt={item.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover"
             style={{ filter: "brightness(0.85)" }}
+            onError={() => setImgError(true)}
           />
-          {/* gradient overlay */}
           <div
             className="absolute inset-0"
             style={{ background: `linear-gradient(to top, ${brand.background ?? "#0D1117"}cc 0%, transparent 60%)` }}
           />
-          {/* category chip */}
           <span
             className="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded-full font-semibold"
             style={{ backgroundColor: `${accent}cc`, color: "#fff" }}
