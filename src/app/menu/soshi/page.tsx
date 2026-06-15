@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { useCart } from "@/components/menu/CartProvider"
-import { menuItems, menuCategories } from "@/data/menu"
+import { menuItems as staticItems, menuCategories } from "@/data/menu"
+import type { MenuItem } from "@/data/menu"
 import MenuCard from "@/components/menu/MenuCard"
 import CartDrawer from "@/components/menu/CartDrawer"
 import CheckoutForm from "@/components/menu/CheckoutForm"
@@ -17,6 +18,27 @@ export default function SoshiMenuPage() {
   const { view, setView, totalItems, totalPrice } = useCart()
   const [screen, setScreen] = useState<Screen>("home")
   const [search, setSearch] = useState("")
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(staticItems)
+
+  // Fetch live price/availability overrides
+  useEffect(() => {
+    fetch("/api/admin/soshi/prices")
+      .then((r) => r.json())
+      .then((rows: { item_id: string; price: number | null; available: boolean | null }[]) => {
+        if (!rows.length) return
+        const map: Record<string, { price?: number; available?: boolean }> = {}
+        rows.forEach(({ item_id, price, available }) => {
+          map[item_id] = {
+            ...(price !== null ? { price } : {}),
+            ...(available !== null ? { available } : {}),
+          }
+        })
+        setMenuItems(staticItems.map((item) =>
+          map[item.id] ? { ...item, ...map[item.id] } : item
+        ))
+      })
+      .catch(() => {})
+  }, [])
 
   const isSearching = search.trim().length > 0
   const activeCategory = menuCategories.find(c => c.id === screen)
@@ -24,10 +46,10 @@ export default function SoshiMenuPage() {
   const categoryItemCounts = useMemo(() => {
     const counts: Record<string, number> = {}
     menuCategories.forEach(cat => {
-      counts[cat.id] = menuItems.filter(i => i.category === cat.id).length
+      counts[cat.id] = menuItems.filter(i => i.category === cat.id && i.available).length
     })
     return counts
-  }, [])
+  }, [menuItems])
 
   // only categories that have at least one item
   const activeCategories = useMemo(
