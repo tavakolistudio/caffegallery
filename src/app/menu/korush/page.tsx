@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, Search, X } from "lucide-react"
@@ -33,7 +33,7 @@ function toPersianNum(n: number): string {
 
 // ─── Item card ────────────────────────────────────────────────────────────────
 
-function ItemCard({ item, brand }: { item: MenuItem; brand: MenuBrand }) {
+function ItemCard({ item, brand, priceOverride }: { item: MenuItem; brand: MenuBrand; priceOverride?: number }) {
   const accent = brand.accent
   const [imgError, setImgError] = useState(false)
   const imgSrc = `/images/menu/korush/${item.id}.webp`
@@ -82,7 +82,7 @@ function ItemCard({ item, brand }: { item: MenuItem; brand: MenuBrand }) {
             <span className="text-[10px] text-[#8A7B68]">{item.amount}</span>
           ) : <span />}
           <span className="text-[13px] font-bold tabular-nums" style={{ color: accent }}>
-            {formatToman(item.price)}
+            {formatToman(priceOverride ?? item.price)}
           </span>
         </div>
       </div>
@@ -99,6 +99,18 @@ export default function KorushMenuPage() {
   const [activeBrandId, setActiveBrandId] = useState<BrandId>(brands[0].id)
   const [activeCategory, setActiveCategory] = useState("همه")
   const [query, setQuery] = useState("")
+  const [priceOverrides, setPriceOverrides] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    fetch("/api/admin/korush/prices")
+      .then((r) => r.json())
+      .then((rows: { item_id: string; price: number }[]) => {
+        const map: Record<string, number> = {}
+        rows.forEach(({ item_id, price }) => { map[item_id] = price })
+        setPriceOverrides(map)
+      })
+      .catch(() => {})
+  }, [])
 
   const activeBrand = brands.find((b) => b.id === activeBrandId)!
 
@@ -244,15 +256,34 @@ export default function KorushMenuPage() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
             {filtered.map((item) => (
-              <ItemCard key={item.id} item={item} brand={activeBrand} />
+              <ItemCard key={item.id} item={item} brand={activeBrand} priceOverride={priceOverrides[item.id]} />
             ))}
           </div>
         )}
       </main>
 
-      <p className="text-center text-[10px] pb-6" style={{ color: "rgba(184,165,143,0.3)" }}>
-        تمام قیمت‌ها به تومان است.
-      </p>
+      {/* Footer */}
+      <footer className="flex flex-col items-center gap-2 py-8 px-4">
+        <p className="text-[10px]" style={{ color: "rgba(184,165,143,0.3)" }}>
+          تمام قیمت‌ها به تومان است.
+        </p>
+        <a
+          href="https://tavakolistudio.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 group mt-1"
+        >
+          <span className="text-[10px] transition-opacity group-hover:opacity-100" style={{ color: "rgba(184,165,143,0.35)" }}>
+            طراحی شده توسط
+          </span>
+          <span
+            className="text-[11px] font-bold tracking-widest transition-all group-hover:opacity-100"
+            style={{ color: "rgba(184,165,143,0.5)", fontFamily: "monospace", letterSpacing: "0.12em" }}
+          >
+            TAVAKOLISTUDIO
+          </span>
+        </a>
+      </footer>
     </div>
   )
 }
