@@ -109,7 +109,7 @@ export default function SoshiMenuPage() {
                 alt=""
                 width={48}
                 height={47}
-                className="w-5 h-5 rounded-md"
+                className="w-8 h-8 rounded-md"
               />
               <span>صفحه اصلی</span>
             </Link>

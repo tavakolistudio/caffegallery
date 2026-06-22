@@ -153,7 +153,7 @@ export default function KorushMenuPage() {
             alt="کافه گالری"
             width={340}
             height={333}
-            className="h-5 w-auto"
+            className="h-9 w-auto"
           />
         </Link>
         <h1 className="text-sm font-bold text-[#F4E9D8]">منو کوروش مال</h1>
