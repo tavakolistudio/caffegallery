@@ -1,4 +1,4 @@
-import type { MenuDatabase } from "../types/menu";
+import type { MenuDatabase } from "@/types/menu";
 
 export const menuDatabase = {
   "meta": {

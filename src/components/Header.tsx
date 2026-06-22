@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Menu, X, ChevronDown } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { useLang } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import LanguageSwitcher from "./LanguageSwitcher"
@@ -82,13 +83,15 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
         {/* Logo */}
-        <a href="#hero" className="flex flex-col leading-none group">
-          <span className="text-lg font-bold text-[#F4E9D8] group-hover:text-[#C58A45] transition-colors">
-            {lang === "fa" ? "کافه گالری" : "Caffegallery"}
-          </span>
-          <span className="text-[10px] text-[#B8A58F] tracking-widest uppercase">
-            {lang === "fa" ? "Caffegallery" : "کافه گالری"}
-          </span>
+        <a href="#hero" className="flex items-center group">
+          <Image
+            src="/images/brand/cafe-gallery-logo.png"
+            alt={lang === "fa" ? "کافه گالری" : "Caffegallery"}
+            width={340}
+            height={333}
+            priority
+            className="h-10 sm:h-11 w-auto transition-opacity group-hover:opacity-80"
+          />
         </a>
 
         {/* Desktop nav */}

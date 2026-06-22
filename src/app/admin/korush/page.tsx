@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { menuBrands, menuItems } from "../../../../korush/src/data/menu-data"
-import { formatToman } from "../../../../korush/src/lib/format-price"
-import type { MenuItem, MenuBrand } from "../../../../korush/src/types/menu"
+import { menuBrands, menuItems } from "@/data/korush-menu-data"
+import { formatPrice } from "@/lib/formatPrice"
+import type { MenuItem, MenuBrand } from "@/types/menu"
 
 const BRANDS = menuBrands as unknown as MenuBrand[]
 const ALL_ITEMS = menuItems as unknown as MenuItem[]
@@ -123,7 +123,7 @@ function PriceRow({
       <div className="flex items-center gap-2 flex-shrink-0">
         {dirty && (
           <span className="text-[10px] line-through text-[#8A7B68]">
-            {formatToman(overridePrice ?? item.price)}
+            {formatPrice(overridePrice ?? item.price)}
           </span>
         )}
         <div className="relative">

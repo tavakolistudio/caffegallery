@@ -1,6 +1,7 @@
 "use client"
 import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
+import Image from "next/image"
 import { useLang } from "@/lib/i18n"
 import { siteData } from "@/data/site"
 import ShaderBackground from "@/components/ShaderBackground"
@@ -26,6 +27,23 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        {/* Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="flex justify-center mb-6"
+        >
+          <Image
+            src="/images/brand/cafe-gallery-logo.png"
+            alt={lang === "fa" ? "کافه گالری" : "Caffegallery"}
+            width={340}
+            height={333}
+            priority
+            className="h-20 sm:h-24 md:h-28 w-auto"
+          />
+        </motion.div>
+
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

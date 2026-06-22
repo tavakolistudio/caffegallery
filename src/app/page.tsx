@@ -1,4 +1,5 @@
 "use client"
+import Image from "next/image"
 import Header from "@/components/Header"
 import Hero from "@/components/Hero"
 import StorySection from "@/components/StorySection"
@@ -28,7 +29,14 @@ export default function Home() {
       <AboutSection />
       <ContactSection />
       {/* Footer */}
-      <footer className="border-t border-white/10 py-6 text-center">
+      <footer className="border-t border-white/10 py-8 text-center flex flex-col items-center gap-4">
+        <Image
+          src="/images/brand/cafe-gallery-logo.png"
+          alt={lang === "fa" ? "کافه گالری" : "Caffegallery"}
+          width={340}
+          height={333}
+          className="h-9 w-auto opacity-80"
+        />
         <p className="text-xs tracking-[0.3em] text-[#B8A58F] uppercase">
           © {new Date().getFullYear()} Caffegallery — Designed & Developed by{" "}
           <span className="text-[#C58A45] font-semibold tracking-[0.4em]">TAVAKOLISTUDIO</span>

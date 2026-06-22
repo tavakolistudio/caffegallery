@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useCart } from "@/components/menu/CartProvider"
 import { menuItems as staticItems, menuCategories } from "@/data/menu"
 import type { MenuItem } from "@/data/menu"
@@ -100,10 +101,16 @@ export default function SoshiMenuPage() {
           ) : (
             <Link
               href="/"
-              className="flex items-center gap-1 text-xs font-semibold transition-opacity hover:opacity-70"
+              className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-70"
               style={{ color: "#516254" }}
             >
-              <span className="text-sm leading-none">⌂</span>
+              <Image
+                src="/images/brand/cafe-gallery-logo-black.png"
+                alt=""
+                width={48}
+                height={47}
+                className="w-5 h-5 rounded-md"
+              />
               <span>صفحه اصلی</span>
             </Link>
           )}
@@ -265,6 +272,26 @@ export default function SoshiMenuPage() {
           </>
         )}
       </main>
+
+      {/* ── FOOTER ──────────────────────────────────────────────────── */}
+      <footer className="flex flex-col items-center py-8 px-4">
+        <a
+          href="https://tavakolistudio.vercel.app/en"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 group"
+        >
+          <span className="text-[10px] transition-opacity" style={{ color: "rgba(81,98,84,0.5)" }}>
+            Powered by
+          </span>
+          <span
+            className="text-[11px] font-bold tracking-widest transition-opacity group-hover:opacity-100"
+            style={{ color: "rgba(27,92,56,0.6)", fontFamily: "monospace", letterSpacing: "0.12em" }}
+          >
+            TAVAKOLISTUDIO
+          </span>
+        </a>
+      </footer>
 
       {/* ── STICKY CART BUTTON ──────────────────────────────────────── */}
       {totalItems > 0 && view === "menu" && (

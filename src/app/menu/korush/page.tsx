@@ -4,9 +4,9 @@ import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, Search, X } from "lucide-react"
-import { menuBrands, menuItems } from "../../../../korush/src/data/menu-data"
-import { formatToman } from "../../../../korush/src/lib/format-price"
-import type { BrandId, MenuItem, MenuBrand } from "../../../../korush/src/types/menu"
+import { menuBrands, menuItems } from "@/data/korush-menu-data"
+import { formatPrice } from "@/lib/formatPrice"
+import type { BrandId, MenuItem, MenuBrand } from "@/types/menu"
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -82,7 +82,7 @@ function ItemCard({ item, brand, priceOverride }: { item: MenuItem; brand: MenuB
             <span className="text-[10px] text-[#8A7B68]">{item.amount}</span>
           ) : <span />}
           <span className="text-[13px] font-bold tabular-nums" style={{ color: accent }}>
-            {formatToman(priceOverride ?? item.price)}
+            {formatPrice(priceOverride ?? item.price)}
           </span>
         </div>
       </div>
@@ -143,12 +143,18 @@ export default function KorushMenuPage() {
       >
         <Link
           href="/"
-          className="flex items-center gap-1 text-xs font-semibold transition-opacity active:opacity-60"
+          className="flex items-center gap-1.5 text-xs font-semibold transition-opacity active:opacity-60"
           style={{ color: "#B8A58F" }}
           aria-label="بازگشت"
         >
           <ArrowRight size={14} />
-          <span className="hidden sm:inline">کافه گالری</span>
+          <Image
+            src="/images/brand/cafe-gallery-logo.png"
+            alt="کافه گالری"
+            width={340}
+            height={333}
+            className="h-5 w-auto"
+          />
         </Link>
         <h1 className="text-sm font-bold text-[#F4E9D8]">منو کوروش مال</h1>
         <div className="w-14" aria-hidden />
