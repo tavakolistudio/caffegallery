@@ -14,7 +14,7 @@ export default function Hero() {
     <section
       id="hero"
       dir={isRtl ? "rtl" : "ltr"}
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080604]"
+      className="relative min-h-screen flex flex-col items-center overflow-hidden bg-[#080604]"
     >
       {/* WebGL shader background */}
       <div className="absolute inset-0 z-0">
@@ -26,6 +26,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#080604]/40 via-transparent to-[#080604]/40" />
 
       {/* Content */}
+      <div className="flex-1 flex items-center justify-center w-full">
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         {/* Logo */}
         <motion.div
@@ -99,13 +100,14 @@ export default function Hero() {
           </a>
         </motion.div>
       </div>
+      </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — sits at natural bottom of flex column, never overlaps CTAs */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        className="relative z-10 flex flex-col items-center gap-2 pb-10"
       >
         <span className="text-[#B8A58F] text-xs tracking-widest uppercase">{copy.scroll}</span>
         <motion.div
