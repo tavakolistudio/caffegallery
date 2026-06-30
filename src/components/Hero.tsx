@@ -26,7 +26,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-[1] bg-gradient-to-r from-[#080604]/40 via-transparent to-[#080604]/40" />
 
       {/* Content */}
-      <div className="flex-1 flex items-center justify-center w-full">
+      <div className="flex-1 flex items-center justify-center w-full pt-24 pb-8">
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         {/* Logo */}
         <motion.div
