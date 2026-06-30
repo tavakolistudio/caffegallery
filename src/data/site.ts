@@ -118,7 +118,7 @@ export const siteData = {
       hoursFa: "ساعت کاری نیازمند تأیید",
       hoursEn: "Working hours to be confirmed",
       mapUrl: "",
-      image: "/images/branches/bagh-moze-honar.webp",
+      image: "/images/gallery/cafe-day-2.jpg",
       typeFa: "کافه‌رستوران / کافه‌گالری",
       typeEn: "Cafe Restaurant / Cafe Gallery",
       featuresFa: ["فضای باغی", "فضای هنری", "مناسب رویداد"],
