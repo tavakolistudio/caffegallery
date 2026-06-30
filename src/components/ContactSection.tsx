@@ -125,7 +125,7 @@ export default function ContactSection() {
               <img
                 src="/images/gallery/cafe-day-1.jpg"
                 alt={lang === "fa" ? "کافه گالری" : "Caffegallery"}
-                className="w-full h-48 object-cover rounded-2xl"
+                className="w-full h-48 object-cover object-bottom rounded-2xl"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#080604]/60 to-transparent rounded-2xl" />
