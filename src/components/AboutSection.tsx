@@ -118,8 +118,12 @@ export default function AboutSection() {
               className="inline-flex flex-col gap-4 px-8 py-6 bg-[#120E0A] border border-[rgba(244,233,216,0.1)] rounded-2xl w-full"
             >
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#C58A45]/20 to-[#D7A85B]/10 border border-[#C58A45]/30 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xl font-bold text-[#C58A45]">{copy.manager.charAt(0)}</span>
+                <div className="w-14 h-14 rounded-full border border-[#C58A45]/40 overflow-hidden flex-shrink-0">
+                  <img
+                    src="/images/brand/manager.png"
+                    alt={copy.manager}
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <h3 className="text-lg font-bold text-[#F4E9D8]">{copy.manager}</h3>
