@@ -60,6 +60,41 @@ export const siteData = {
       image: "https://d8j0ntlcm91z4.cloudfront.net/user_36eIr1isDUTNCuNk7dazeSjIsL2/hf_20260610_085733_d967bb4e-0ecc-4cad-ac14-d75bea6aff49_min.webp",
       category: "interior",
     },
+    {
+      id: "g7",
+      titleFa: "فضای سبز کافه",
+      titleEn: "Cafe Garden",
+      image: "/images/gallery/cafe-day-1.jpg",
+      category: "interior",
+    },
+    {
+      id: "g8",
+      titleFa: "نشستن زیر سایه درختان",
+      titleEn: "Outdoor Seating Under the Trees",
+      image: "/images/gallery/cafe-day-2.jpg",
+      category: "interior",
+    },
+    {
+      id: "g9",
+      titleFa: "جادوی شب کنار آب‌نما",
+      titleEn: "Night Magic by the Fountain",
+      image: "/images/gallery/cafe-night-1.jpg",
+      category: "interior",
+    },
+    {
+      id: "g10",
+      titleFa: "چای سنتی ایرانی",
+      titleEn: "Traditional Persian Tea",
+      image: "/images/gallery/cafe-tea.jpg",
+      category: "menu",
+    },
+    {
+      id: "g11",
+      titleFa: "آب‌نمای کافه گالری",
+      titleEn: "Cafe Gallery Fountain",
+      image: "/images/gallery/cafe-fountain.jpg",
+      category: "interior",
+    },
   ],
 
   contact: {
