@@ -39,7 +39,14 @@ export default function Home() {
         />
         <p className="text-xs tracking-[0.3em] text-[#B8A58F] uppercase">
           © {new Date().getFullYear()} Caffegallery — Designed & Developed by{" "}
-          <span className="text-[#C58A45] font-semibold tracking-[0.4em]">TAVAKOLISTUDIO</span>
+          <a
+            href="https://tavakolistudio.vercel.app/en"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#C58A45] font-semibold tracking-[0.4em] hover:text-[#D7A85B] transition-colors duration-200 underline underline-offset-2 decoration-[#C58A45]/40"
+          >
+            TAVAKOLISTUDIO
+          </a>
         </p>
       </footer>
     </div>
