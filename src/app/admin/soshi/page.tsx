@@ -101,6 +101,17 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 type Override = { price?: number; available?: boolean; name?: string; image?: string }
 type CustomMenuItem = MenuItem & { created_at?: string }
 
+function displayName(itemId: string, name: string | null) {
+  if (!name || !itemId.startsWith("custom__")) return name
+
+  try {
+    const parsed = JSON.parse(name) as { name?: unknown }
+    return typeof parsed.name === "string" ? parsed.name : name
+  } catch {
+    return name
+  }
+}
+
 function ItemRow({
   item,
   override,
@@ -298,10 +309,11 @@ function AdminPanel({ password }: { password: string }) {
         if (!Array.isArray(overrideRows)) return
         const map: Record<string, Override> = {}
         overrideRows.forEach(({ item_id, price, available, name, image }) => {
+          const decodedName = displayName(item_id, name)
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
-            ...(name !== null ? { name } : {}),
+            ...(decodedName !== null ? { name: decodedName } : {}),
             ...(image !== null ? { image } : {}), // "" = removed photo
           }
         })
