@@ -11,30 +11,62 @@ const headers = {
   Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
 }
 
-// GET — public, returns {item_id, price, available}[]
-export async function GET() {
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/soshi_menu_overrides?select=item_id,price,available`,
-    { headers, cache: "no-store" }
-  )
-  const data = await res.json()
-  return NextResponse.json(data)
+const TABLE = `${SUPABASE_URL}/rest/v1/soshi_menu_overrides`
+const SELECT = "item_id,price,available,name,image"
+
+type Override = {
+  item_id: string
+  price?: number | null
+  available?: boolean | null
+  name?: string | null
+  image?: string | null
 }
 
-// POST — protected, body: {password, updates: [{item_id, price?, available?}]}
+// GET — public, returns {item_id, price, available, name, image}[]
+export async function GET() {
+  const res = await fetch(`${TABLE}?select=${SELECT}`, { headers, cache: "no-store" })
+  const data = await res.json().catch(() => null)
+  // Always return an array so clients can safely iterate.
+  return NextResponse.json(Array.isArray(data) ? data : [])
+}
+
+// POST — protected, body: {password, updates: [{item_id, price?, available?, name?, image?}]}
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null)
   if (!body || body.password !== ADMIN_PASSWORD) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const updates: { item_id: string; price?: number; available?: boolean }[] = body.updates ?? []
+  const updates: Override[] = (body.updates ?? []).filter((u: Override) => u && u.item_id)
   if (!updates.length) return NextResponse.json({ ok: true })
 
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/soshi_menu_overrides`, {
+  // Fetch existing rows so every column is present in the upsert payload.
+  // (PostgREST bulk-upsert nulls out any column missing from an object, so we
+  //  always send the full merged row to avoid clobbering unrelated fields.)
+  const ids = [...new Set(updates.map((u) => u.item_id))]
+  const inList = ids.map((id) => `"${id.replace(/"/g, '""')}"`).join(",")
+  const existingRes = await fetch(`${TABLE}?select=${SELECT}&item_id=in.(${inList})`, {
+    headers,
+    cache: "no-store",
+  })
+  const existing: Override[] = existingRes.ok ? await existingRes.json() : []
+  const existingMap = new Map(existing.map((r) => [r.item_id, r]))
+
+  const rows = updates.map((u) => {
+    const prev: Override = existingMap.get(u.item_id) ?? { item_id: u.item_id }
+    return {
+      item_id: u.item_id,
+      price: "price" in u ? u.price : prev.price ?? null,
+      available: "available" in u ? u.available : prev.available ?? null,
+      name: "name" in u ? u.name : prev.name ?? null,
+      image: "image" in u ? u.image : prev.image ?? null,
+    }
+  })
+
+  const res = await fetch(TABLE, {
     method: "POST",
     headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
-    body: JSON.stringify(updates),
+    body: JSON.stringify(rows),
   })
 
   if (!res.ok) {

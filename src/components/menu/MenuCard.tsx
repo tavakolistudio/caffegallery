@@ -17,6 +17,21 @@ export default function MenuCard({ item }: { item: MenuItem }) {
         boxShadow: "0 1px 8px rgba(27,92,56,0.06)",
       }}
     >
+      {item.image && (
+        <div
+          className="relative w-full overflow-hidden rounded-xl -mt-1"
+          style={{ aspectRatio: "3 / 2", background: "#EEF7F2" }}
+        >
+          <img
+            src={item.image}
+            alt={item.name}
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: item.available ? 1 : 0.5 }}
+          />
+        </div>
+      )}
+
       <div>
         <h3 className="font-bold text-[#121613] text-[15px] leading-snug">{item.name}</h3>
         {item.ingredients && (

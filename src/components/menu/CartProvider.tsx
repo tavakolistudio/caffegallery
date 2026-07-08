@@ -77,7 +77,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         dir="rtl"
         style={{
           background: "#FAFFFA",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           color: "#121613",
           fontFamily: "var(--font-vazirmatn), Vazirmatn, sans-serif",
         }}

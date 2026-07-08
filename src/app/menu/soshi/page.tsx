@@ -21,17 +21,26 @@ export default function SoshiMenuPage() {
   const [search, setSearch] = useState("")
   const [menuItems, setMenuItems] = useState<MenuItem[]>(staticItems)
 
-  // Fetch live price/availability overrides
+  // Fetch live price / availability / name / image overrides
   useEffect(() => {
     fetch("/api/admin/soshi/prices")
       .then((r) => r.json())
-      .then((rows: { item_id: string; price: number | null; available: boolean | null }[]) => {
-        if (!rows.length) return
-        const map: Record<string, { price?: number; available?: boolean }> = {}
-        rows.forEach(({ item_id, price, available }) => {
+      .then((rows: {
+        item_id: string
+        price: number | null
+        available: boolean | null
+        name: string | null
+        image: string | null
+      }[]) => {
+        if (!Array.isArray(rows) || !rows.length) return
+        const map: Record<string, Partial<MenuItem>> = {}
+        rows.forEach(({ item_id, price, available, name, image }) => {
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
+            ...(name ? { name } : {}),
+            // "" = admin explicitly removed the photo; a URL = custom photo
+            ...(image !== null ? { image: image || undefined } : {}),
           }
         })
         setMenuItems(staticItems.map((item) =>

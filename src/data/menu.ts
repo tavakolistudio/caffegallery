@@ -9,6 +9,8 @@ export interface MenuItem {
   ingredients: string
   price: number
   available: boolean
+  /** Optional dish photo. Absolute path under /public, or a full URL (admin override). */
+  image?: string
 }
 
 export interface MenuCategory {
@@ -145,3 +147,29 @@ export const menuItems: MenuItem[] = [
   // ── جاجانگمیون ────────────────────────────────────────────────────
   // TODO: items not provided yet
 ]
+
+// Dish photos that ship with the site (in /public/images/menu/items/<id>.webp).
+// Admins can override or remove per-item images at runtime via the overrides API.
+const ITEM_IDS_WITH_IMAGE = new Set<string>([
+  "hb-01", "hb-02", "hb-03", "hb-04", "hb-05",
+  "kq-01", "kq-02", "kt-01", "kt-02",
+  "nd-01", "nd-02", "nd-03", "nd-04",
+  "pg-01", "pg-02", "pg-03", "pg-04", "pg-05", "pg-06", "pg-07", "pg-09",
+  "salad-01", "salad-02", "salad-03", "salad-04",
+  "sb-01", "sb-02", "sb-03",
+  "soup-01", "soup-02", "soup-03", "soup-04", "soup-05",
+  "sushi-01", "sushi-02", "sushi-03", "sushi-04", "sushi-05", "sushi-06", "sushi-07",
+  "sushi-08", "sushi-09", "sushi-10", "sushi-11", "sushi-12", "sushi-13", "sushi-14",
+  "sushi-15", "sushi-16", "sushi-17", "sushi-18", "sushi-20", "sushi-21", "sushi-22",
+  "sushi-23", "sushi-24",
+])
+
+/** Built-in default photo for an item, if one shipped with the site. */
+export function defaultItemImage(id: string): string | undefined {
+  return ITEM_IDS_WITH_IMAGE.has(id) ? `/images/menu/items/${id}.webp` : undefined
+}
+
+for (const item of menuItems) {
+  const img = defaultItemImage(item.id)
+  if (img) item.image = img
+}
