@@ -98,17 +98,21 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
 // ─── Item row ──────────────────────────────────────────────────────────────────
 
-type Override = { price?: number; available?: boolean; name?: string; image?: string }
+type Override = { price?: number; available?: boolean; name?: string; ingredients?: string; image?: string }
 type CustomMenuItem = MenuItem & { created_at?: string }
 
-function displayName(itemId: string, name: string | null) {
-  if (!name || !itemId.startsWith("custom__")) return name
+function displayText(name: string | null) {
+  if (!name) return { name: "", ingredients: "", structured: false }
 
   try {
-    const parsed = JSON.parse(name) as { name?: unknown }
-    return typeof parsed.name === "string" ? parsed.name : name
+    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown }
+    return {
+      name: typeof parsed.name === "string" ? parsed.name : name,
+      ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      structured: true,
+    }
   } catch {
-    return name
+    return { name, ingredients: "", structured: false }
   }
 }
 
@@ -125,7 +129,7 @@ function ItemRow({
   item: MenuItem
   override: Override
   pending: Override
-  onChange: (id: string, field: "price" | "available" | "name", value: number | boolean | string) => void
+  onChange: (id: string, field: "price" | "available" | "name" | "ingredients", value: number | boolean | string) => void
   onUploadImage: (id: string, file: File) => void
   onRemoveImage: (id: string) => void
   imageBusy: boolean
@@ -135,6 +139,7 @@ function ItemRow({
   const currentPrice = merged.price ?? item.price
   const isAvailable = merged.available ?? item.available
   const currentName = merged.name ?? item.name
+  const currentIngredients = merged.ingredients ?? item.ingredients
 
   // Effective image: "" override = removed; url = custom; otherwise built-in default
   const effectiveImage =
@@ -142,13 +147,16 @@ function ItemRow({
 
   const [priceVal, setPriceVal] = useState(String(currentPrice))
   const [nameVal, setNameVal] = useState(currentName)
+  const [ingredientsVal, setIngredientsVal] = useState(currentIngredients)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => { setPriceVal(String(merged.price ?? item.price)) }, [merged.price, item.price])
   useEffect(() => { setNameVal(merged.name ?? item.name) }, [merged.name, item.name])
+  useEffect(() => { setIngredientsVal(merged.ingredients ?? item.ingredients) }, [merged.ingredients, item.ingredients])
 
   const priceDirty = "price" in pending
   const nameDirty = "name" in pending
+  const ingredientsDirty = "ingredients" in pending
 
   function handlePriceBlur() {
     const n = parseInt(priceVal.replace(/,/g, ""), 10)
@@ -160,13 +168,18 @@ function ItemRow({
     if (v && v !== currentName) onChange(item.id, "name", v)
     else setNameVal(currentName)
   }
+  function handleIngredientsBlur() {
+    const v = ingredientsVal.trim()
+    if (v !== currentIngredients) onChange(item.id, "ingredients", v)
+    else setIngredientsVal(currentIngredients)
+  }
 
   return (
     <div
       className="flex flex-col gap-2.5 px-3 py-3 rounded-xl border transition-all"
       style={{
-        backgroundColor: !isAvailable ? "#FFF5F5" : (priceDirty || nameDirty) ? "#F0FDF4" : "white",
-        borderColor: !isAvailable ? "#FECACA" : (priceDirty || nameDirty) ? "#86EFAC" : ACCENT_LIGHT,
+        backgroundColor: !isAvailable ? "#FFF5F5" : (priceDirty || nameDirty || ingredientsDirty) ? "#F0FDF4" : "white",
+        borderColor: !isAvailable ? "#FECACA" : (priceDirty || nameDirty || ingredientsDirty) ? "#86EFAC" : ACCENT_LIGHT,
         opacity: !isAvailable ? 0.85 : 1,
       }}
     >
@@ -214,6 +227,19 @@ function ItemRow({
           <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] text-[#6B7C6E] pointer-events-none">ت</span>
         </div>
       </div>
+
+      <textarea
+        value={ingredientsVal}
+        onChange={(e) => setIngredientsVal(e.target.value)}
+        onBlur={handleIngredientsBlur}
+        className="mr-[52px] min-h-14 rounded-lg px-2 py-1.5 text-xs outline-none border resize-y"
+        style={{
+          borderColor: ingredientsDirty ? ACCENT : "transparent",
+          backgroundColor: ingredientsDirty ? "#F0FDF4" : "#F7FAF8",
+          color: "#516254",
+        }}
+        placeholder="اجزا / توضیحات"
+      />
 
       {/* Bottom: image controls */}
       <div className="flex items-center gap-3 pr-[52px]">
@@ -309,11 +335,12 @@ function AdminPanel({ password }: { password: string }) {
         if (!Array.isArray(overrideRows)) return
         const map: Record<string, Override> = {}
         overrideRows.forEach(({ item_id, price, available, name, image }) => {
-          const decodedName = displayName(item_id, name)
+          const decoded = displayText(name)
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
-            ...(decodedName !== null ? { name: decodedName } : {}),
+            ...(decoded.name ? { name: decoded.name } : {}),
+            ...(decoded.structured ? { ingredients: decoded.ingredients } : {}),
             ...(image !== null ? { image } : {}), // "" = removed photo
           }
         })
@@ -324,7 +351,7 @@ function AdminPanel({ password }: { password: string }) {
 
   const allMenuItems = useMemo(() => [...menuItems, ...customItems], [customItems])
 
-  function handleChange(id: string, field: "price" | "available" | "name", value: number | boolean | string) {
+  function handleChange(id: string, field: "price" | "available" | "name" | "ingredients", value: number | boolean | string) {
     setPending((p) => ({ ...p, [id]: { ...p[id], [field]: value } }))
     setSaved(false)
   }
@@ -380,7 +407,17 @@ function AdminPanel({ password }: { password: string }) {
 
   async function handleSave() {
     setSaving(true)
-    const updates = Object.entries(pending).map(([item_id, o]) => ({ item_id, ...o }))
+    const itemMap = new Map(allMenuItems.map((item) => [item.id, item]))
+    const updates = Object.entries(pending).map(([item_id, o]) => ({
+      item_id,
+      ...o,
+      ...("ingredients" in o && !("name" in o)
+        ? { name: overrides[item_id]?.name ?? itemMap.get(item_id)?.name ?? "" }
+        : {}),
+      ...("name" in o && !("ingredients" in o)
+        ? { ingredients: overrides[item_id]?.ingredients ?? itemMap.get(item_id)?.ingredients ?? "" }
+        : {}),
+    }))
     const res = await fetch("/api/admin/soshi/prices", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

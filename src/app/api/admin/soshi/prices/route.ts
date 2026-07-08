@@ -19,7 +19,26 @@ type Override = {
   price?: number | null
   available?: boolean | null
   name?: string | null
+  ingredients?: string | null
   image?: string | null
+}
+
+function decodeText(value: string | null | undefined) {
+  if (!value) return { name: "", ingredients: "" }
+
+  try {
+    const parsed = JSON.parse(value) as { name?: unknown; ingredients?: unknown }
+    return {
+      name: typeof parsed.name === "string" ? parsed.name : value,
+      ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+    }
+  } catch {
+    return { name: value, ingredients: "" }
+  }
+}
+
+function encodeText(name: string, ingredients: string) {
+  return JSON.stringify({ name, ingredients })
 }
 
 // GET — public, returns {item_id, price, available, name, image}[]
@@ -54,11 +73,18 @@ export async function POST(req: NextRequest) {
 
   const rows = updates.map((u) => {
     const prev: Override = existingMap.get(u.item_id) ?? { item_id: u.item_id }
+    const prevText = decodeText(prev.name)
+    const textChanged = "name" in u || "ingredients" in u
     return {
       item_id: u.item_id,
       price: "price" in u ? u.price : prev.price ?? null,
       available: "available" in u ? u.available : prev.available ?? null,
-      name: "name" in u ? u.name : prev.name ?? null,
+      name: textChanged
+        ? encodeText(
+            ("name" in u ? u.name : prevText.name) ?? "",
+            ("ingredients" in u ? u.ingredients : prevText.ingredients) ?? ""
+          )
+        : prev.name ?? null,
       image: "image" in u ? u.image : prev.image ?? null,
     }
   })

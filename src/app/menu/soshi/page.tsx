@@ -25,14 +25,18 @@ type CustomMenuItem = {
   image?: string | null
 }
 
-function displayName(itemId: string, name: string | null) {
-  if (!name || !itemId.startsWith("custom__")) return name
+function displayText(name: string | null) {
+  if (!name) return { name: "", ingredients: "", structured: false }
 
   try {
-    const parsed = JSON.parse(name) as { name?: unknown }
-    return typeof parsed.name === "string" ? parsed.name : name
+    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown }
+    return {
+      name: typeof parsed.name === "string" ? parsed.name : name,
+      ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      structured: true,
+    }
   } catch {
-    return name
+    return { name, ingredients: "", structured: false }
   }
 }
 
@@ -77,11 +81,12 @@ export default function SoshiMenuPage() {
           return
         }
         overrideRows.forEach(({ item_id, price, available, name, image }) => {
-          const decodedName = displayName(item_id, name)
+          const decoded = displayText(name)
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
-            ...(decodedName ? { name: decodedName } : {}),
+            ...(decoded.name ? { name: decoded.name } : {}),
+            ...(decoded.structured ? { ingredients: decoded.ingredients } : {}),
             // "" = admin explicitly removed the photo; a URL = custom photo
             ...(image !== null ? { image: image || undefined } : {}),
           }
