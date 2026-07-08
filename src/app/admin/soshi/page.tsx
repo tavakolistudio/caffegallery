@@ -265,6 +265,8 @@ function AdminPanel({ password }: { password: string }) {
   const [saved, setSaved] = useState(false)
   const [activeCategory, setActiveCategory] = useState("all")
   const [query, setQuery] = useState("")
+  const [showAddItem, setShowAddItem] = useState(false)
+  const [newItem, setNewItem] = useState({ category: "sushi", name: "", ingredients: "", price: "" })
   const [imageBusyId, setImageBusyId] = useState<string | null>(null)
   const [imageSavedId, setImageSavedId] = useState<string | null>(null)
 
@@ -364,6 +366,32 @@ function AdminPanel({ password }: { password: string }) {
     }
   }
 
+  async function handleAddItem(e: React.FormEvent) {
+    e.preventDefault()
+    if (!newItem.name || !newItem.price) {
+      alert("نام و قیمت الزامی است")
+      return
+    }
+    const res = await fetch("/api/admin/soshi/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password,
+        category: newItem.category,
+        name: newItem.name,
+        ingredients: newItem.ingredients,
+        price: parseInt(newItem.price, 10) * 1000,
+      }),
+    })
+    if (res.ok) {
+      alert("آیتم شامل شد")
+      setNewItem({ category: "sushi", name: "", ingredients: "", price: "" })
+      setShowAddItem(false)
+    } else {
+      alert("خطا در شامل کردن")
+    }
+  }
+
   const activeItems = useMemo(() => {
     const byCat = activeCategory === "all"
       ? menuItems
@@ -400,6 +428,13 @@ function AdminPanel({ password }: { password: string }) {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowAddItem(true)}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold text-white"
+            style={{ backgroundColor: ACCENT }}
+          >
+            ➕ آیتم جدید
+          </button>
           {dirtyCount > 0 && (
             <span className="text-[11px] px-2 py-0.5 rounded-full bg-green-50 text-green-700">
               {dirtyCount} تغییر
@@ -494,6 +529,66 @@ function AdminPanel({ password }: { password: string }) {
           >
             {saving ? "در حال ذخیره…" : `ذخیره ${dirtyCount} تغییر`}
           </button>
+        </div>
+      )}
+
+      {showAddItem && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full" dir="rtl">
+            <h2 className="text-lg font-bold mb-4 text-[#121613]">آیتم جدید</h2>
+            <form onSubmit={handleAddItem} className="flex flex-col gap-3">
+              <select
+                value={newItem.category}
+                onChange={(e) => setNewItem({...newItem, category: e.target.value})}
+                className="px-3 py-2 rounded-lg border outline-none text-sm"
+                style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
+              >
+                {menuCategories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="نام غذا"
+                value={newItem.name}
+                onChange={(e) => setNewItem({...newItem, name: e.target.value})}
+                className="px-3 py-2 rounded-lg border outline-none text-sm"
+                style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
+              />
+              <textarea
+                placeholder="اجزاء (اختیاری)"
+                value={newItem.ingredients}
+                onChange={(e) => setNewItem({...newItem, ingredients: e.target.value})}
+                className="px-3 py-2 rounded-lg border outline-none text-sm h-16 resize-none"
+                style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
+              />
+              <input
+                type="number"
+                placeholder="قیمت (هزار تومان)"
+                value={newItem.price}
+                onChange={(e) => setNewItem({...newItem, price: e.target.value})}
+                className="px-3 py-2 rounded-lg border outline-none text-sm"
+                style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddItem(false)}
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold"
+                  style={{ background: ACCENT_LIGHT, color: ACCENT }}
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold text-white"
+                  style={{ backgroundColor: ACCENT }}
+                >
+                  شامل کردن
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
