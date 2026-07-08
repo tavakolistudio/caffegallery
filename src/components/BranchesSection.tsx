@@ -80,14 +80,23 @@ export default function BranchesSection() {
                 key={branch.id}
                 className="group flex flex-col rounded-2xl bg-[#120E0A] border border-[rgba(244,233,216,0.08)] hover:border-[#C58A45]/30 transition-all duration-300 overflow-hidden"
               >
-                <div className="w-full h-44 bg-gradient-to-br from-[#1A1208] to-[#0E0A06] flex items-center justify-center relative overflow-hidden flex-shrink-0">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#C58A45]/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="flex flex-col items-center gap-2 text-[#B8A58F]/50">
-                    <div className="w-12 h-12 rounded-xl border border-[#C58A45]/20 flex items-center justify-center">
-                      <div className="w-6 h-6 rounded border-2 border-[#C58A45]/30" />
+                <div className="w-full h-44 relative overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#1A1208] to-[#0E0A06]">
+                  <div className="absolute inset-0 z-10 bg-gradient-to-br from-[#C58A45]/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {branch.image ? (
+                    <img
+                      src={branch.image}
+                      alt={name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full gap-2 text-[#B8A58F]/50">
+                      <div className="w-12 h-12 rounded-xl border border-[#C58A45]/20 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded border-2 border-[#C58A45]/30" />
+                      </div>
+                      <span className="text-xs">{name.split("—")[0].trim()}</span>
                     </div>
-                    <span className="text-xs">{name.split("—")[0].trim()}</span>
-                  </div>
+                  )}
                 </div>
 
                 <div className="p-5 flex flex-col gap-3 flex-1">

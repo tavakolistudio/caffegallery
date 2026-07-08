@@ -118,8 +118,19 @@ export default function ContactSection() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Contact cards */}
+          {/* Contact cards + photo */}
           <div ref={cardsRef} className="flex flex-col gap-4">
+            {/* Cafe photo */}
+            <div className="relative rounded-2xl overflow-hidden mb-2">
+              <img
+                src="/images/gallery/cafe-day-1.jpg"
+                alt={lang === "fa" ? "کافه گالری" : "Caffegallery"}
+                className="w-full h-48 object-cover object-bottom rounded-2xl"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#080604]/60 to-transparent rounded-2xl" />
+            </div>
+
             {contactCards.map((card, i) => {
               const Icon = card.icon
               const Inner = (
