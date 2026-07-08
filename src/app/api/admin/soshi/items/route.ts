@@ -12,7 +12,6 @@ const headers = {
 
 const TABLE = `${SUPABASE_URL}/rest/v1/soshi_menu_overrides`
 const CUSTOM_PREFIX = "custom__"
-const CATEGORY_PREFIX = "category__"
 
 type OverrideRow = {
   item_id: string
@@ -131,17 +130,6 @@ export async function DELETE(req: NextRequest) {
 
   const { id } = body
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 })
-
-  if (String(id).startsWith(CUSTOM_PREFIX) || String(id).startsWith(CATEGORY_PREFIX)) {
-    const res = await fetch(`${TABLE}?item_id=eq.${encodeURIComponent(id)}`, {
-      method: "DELETE",
-      headers,
-    })
-
-    return res.ok
-      ? NextResponse.json({ ok: true })
-      : NextResponse.json({ error: "Delete failed" }, { status: 500 })
-  }
 
   const name = String(body.name ?? "")
   const ingredients = String(body.ingredients ?? "")
