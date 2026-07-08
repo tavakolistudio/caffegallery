@@ -15,26 +15,57 @@ import { toPersian } from "@/lib/persianNumbers"
 // null = category grid (home), string = inside a category
 type Screen = "home" | string
 
+type CustomMenuItem = {
+  id: string
+  category: string
+  name: string
+  ingredients?: string | null
+  price: number
+  available?: boolean | null
+  image?: string | null
+}
+
 export default function SoshiMenuPage() {
   const { view, setView, totalItems, totalPrice } = useCart()
   const [screen, setScreen] = useState<Screen>("home")
   const [search, setSearch] = useState("")
   const [menuItems, setMenuItems] = useState<MenuItem[]>(staticItems)
 
-  // Fetch live price / availability / name / image overrides
+  // Fetch custom items plus live price / availability / name / image overrides
   useEffect(() => {
-    fetch("/api/admin/soshi/prices")
-      .then((r) => r.json())
-      .then((rows: {
+    Promise.all([
+      fetch("/api/admin/soshi/items").then((r) => r.json()).catch(() => []),
+      fetch("/api/admin/soshi/prices").then((r) => r.json()).catch(() => []),
+    ])
+      .then(([customRows, overrideRows]: [
+        CustomMenuItem[],
+        {
         item_id: string
         price: number | null
         available: boolean | null
         name: string | null
         image: string | null
-      }[]) => {
-        if (!Array.isArray(rows) || !rows.length) return
+      }[]
+      ]) => {
+        const customItems: MenuItem[] = Array.isArray(customRows)
+          ? customRows.map((item) => ({
+              id: item.id,
+              category: item.category,
+              name: item.name,
+              ingredients: item.ingredients ?? "",
+              price: item.price,
+              available: item.available ?? true,
+              ...(item.image ? { image: item.image } : {}),
+            }))
+          : []
+        const baseItems = [...staticItems, ...customItems]
+
         const map: Record<string, Partial<MenuItem>> = {}
-        rows.forEach(({ item_id, price, available, name, image }) => {
+        if (!Array.isArray(overrideRows) || !overrideRows.length) {
+          setMenuItems(baseItems)
+          return
+        }
+        overrideRows.forEach(({ item_id, price, available, name, image }) => {
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
@@ -43,7 +74,7 @@ export default function SoshiMenuPage() {
             ...(image !== null ? { image: image || undefined } : {}),
           }
         })
-        setMenuItems(staticItems.map((item) =>
+        setMenuItems(baseItems.map((item) =>
           map[item.id] ? { ...item, ...map[item.id] } : item
         ))
       })
@@ -78,7 +109,7 @@ export default function SoshiMenuPage() {
     }
     if (screen !== "home") return menuItems.filter(i => i.category === screen)
     return []
-  }, [search, screen, isSearching])
+  }, [search, screen, isSearching, menuItems])
 
   return (
     <>

@@ -16,8 +16,8 @@ export async function GET() {
     `${SUPABASE_URL}/rest/v1/soshi_menu_items?select=*&order=created_at.desc`,
     { headers, cache: "no-store" }
   )
-  const data = await res.json()
-  return NextResponse.json(data)
+  const data = await res.json().catch(() => null)
+  return NextResponse.json(Array.isArray(data) ? data : [])
 }
 
 // POST — add new item (protected)
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) {
     const err = await res.text()
-    return NextResponse.json({ error: err }, { status: 500 })
+    return NextResponse.json({ error: err }, { status: res.status || 500 })
   }
 
   const data = await res.json()

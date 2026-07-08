@@ -99,6 +99,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 // ─── Item row ──────────────────────────────────────────────────────────────────
 
 type Override = { price?: number; available?: boolean; name?: string; image?: string }
+type CustomMenuItem = MenuItem & { created_at?: string }
 
 function ItemRow({
   item,
@@ -267,18 +268,36 @@ function AdminPanel({ password }: { password: string }) {
   const [query, setQuery] = useState("")
   const [showAddItem, setShowAddItem] = useState(false)
   const [newItem, setNewItem] = useState({ category: "sushi", name: "", ingredients: "", price: "" })
+  const [customItems, setCustomItems] = useState<MenuItem[]>([])
   const [imageBusyId, setImageBusyId] = useState<string | null>(null)
   const [imageSavedId, setImageSavedId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch("/api/admin/soshi/prices")
-      .then((r) => r.json())
-      .then((rows: {
+    Promise.all([
+      fetch("/api/admin/soshi/items").then((r) => r.json()).catch(() => []),
+      fetch("/api/admin/soshi/prices").then((r) => r.json()).catch(() => []),
+    ])
+      .then(([itemRows, overrideRows]: [
+        CustomMenuItem[],
+        {
         item_id: string; price: number | null; available: boolean | null
         name: string | null; image: string | null
-      }[]) => {
+      }[]
+      ]) => {
+        if (Array.isArray(itemRows)) {
+          setCustomItems(itemRows.map((item) => ({
+            id: item.id,
+            category: item.category,
+            name: item.name,
+            ingredients: item.ingredients ?? "",
+            price: item.price,
+            available: item.available ?? true,
+            ...(item.image ? { image: item.image } : {}),
+          })))
+        }
+        if (!Array.isArray(overrideRows)) return
         const map: Record<string, Override> = {}
-        rows.forEach(({ item_id, price, available, name, image }) => {
+        overrideRows.forEach(({ item_id, price, available, name, image }) => {
           map[item_id] = {
             ...(price !== null ? { price } : {}),
             ...(available !== null ? { available } : {}),
@@ -290,6 +309,8 @@ function AdminPanel({ password }: { password: string }) {
       })
       .catch(() => {})
   }, [])
+
+  const allMenuItems = useMemo(() => [...menuItems, ...customItems], [customItems])
 
   function handleChange(id: string, field: "price" | "available" | "name", value: number | boolean | string) {
     setPending((p) => ({ ...p, [id]: { ...p[id], [field]: value } }))
@@ -384,35 +405,48 @@ function AdminPanel({ password }: { password: string }) {
       }),
     })
     if (res.ok) {
+      const item = await res.json().catch(() => null)
+      if (item && item.id) {
+        setCustomItems((items) => [{
+          id: item.id,
+          category: item.category,
+          name: item.name,
+          ingredients: item.ingredients ?? "",
+          price: item.price,
+          available: item.available ?? true,
+          ...(item.image ? { image: item.image } : {}),
+        }, ...items])
+      }
       alert("آیتم شامل شد")
       setNewItem({ category: "sushi", name: "", ingredients: "", price: "" })
       setShowAddItem(false)
     } else {
-      alert("خطا در شامل کردن")
+      const data = await res.json().catch(() => null)
+      alert(data?.error ? `خطا در شامل کردن:\n${data.error}` : "خطا در شامل کردن")
     }
   }
 
   const activeItems = useMemo(() => {
     const byCat = activeCategory === "all"
-      ? menuItems
-      : menuItems.filter((i) => i.category === activeCategory)
+      ? allMenuItems
+      : allMenuItems.filter((i) => i.category === activeCategory)
     if (!query.trim()) return byCat
     const q = query.trim().toLowerCase()
     return byCat.filter((i) => {
       const name = (pending[i.id]?.name ?? overrides[i.id]?.name ?? i.name).toLowerCase()
       return name.includes(q)
     })
-  }, [activeCategory, query, overrides, pending])
+  }, [activeCategory, allMenuItems, query, overrides, pending])
 
   const dirtyCount = Object.keys(pending).length
-  const unavailableCount = menuItems.filter((i) => {
+  const unavailableCount = allMenuItems.filter((i) => {
     const o = { ...overrides[i.id], ...pending[i.id] }
     return o.available === false
   }).length
 
   const activeCategories = useMemo(
-    () => menuCategories.filter((c) => menuItems.some((i) => i.category === c.id)),
-    []
+    () => menuCategories.filter((c) => allMenuItems.some((i) => i.category === c.id)),
+    [allMenuItems]
   )
 
   return (
@@ -461,11 +495,11 @@ function AdminPanel({ password }: { password: string }) {
               color: activeCategory === "all" ? "white" : "#1B5C38",
             }}
           >
-            همه ({menuItems.length})
+            همه ({allMenuItems.length})
           </button>
           {activeCategories.map((cat) => {
-            const count = menuItems.filter((i) => i.category === cat.id).length
-            const unavail = menuItems.filter((i) => {
+            const count = allMenuItems.filter((i) => i.category === cat.id).length
+            const unavail = allMenuItems.filter((i) => {
               if (i.category !== cat.id) return false
               const o = { ...overrides[i.id], ...pending[i.id] }
               return o.available === false
