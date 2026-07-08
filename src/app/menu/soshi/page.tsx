@@ -306,8 +306,8 @@ export default function SoshiMenuPage() {
           /* ── CATEGORY ITEMS ── */
           <>
             {/* Quick category switcher */}
-            <div className="overflow-x-auto mb-4 pt-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              <div className="flex gap-2" style={{ width: "max-content" }}>
+            <div className="mb-4 pt-1">
+              <div className="flex flex-wrap justify-center gap-2">
                 {activeCategories.map(cat => (
                   <button
                     key={cat.id}
