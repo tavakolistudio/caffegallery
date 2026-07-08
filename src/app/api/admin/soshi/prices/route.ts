@@ -20,25 +20,27 @@ type Override = {
   available?: boolean | null
   name?: string | null
   ingredients?: string | null
+  deleted?: boolean | null
   image?: string | null
 }
 
 function decodeText(value: string | null | undefined) {
-  if (!value) return { name: "", ingredients: "" }
+  if (!value) return { name: "", ingredients: "", deleted: false }
 
   try {
-    const parsed = JSON.parse(value) as { name?: unknown; ingredients?: unknown }
+    const parsed = JSON.parse(value) as { name?: unknown; ingredients?: unknown; deleted?: unknown }
     return {
       name: typeof parsed.name === "string" ? parsed.name : value,
       ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      deleted: parsed.deleted === true,
     }
   } catch {
-    return { name: value, ingredients: "" }
+    return { name: value, ingredients: "", deleted: false }
   }
 }
 
-function encodeText(name: string, ingredients: string) {
-  return JSON.stringify({ name, ingredients })
+function encodeText(name: string, ingredients: string, deleted = false) {
+  return JSON.stringify({ name, ingredients, deleted })
 }
 
 // GET — public, returns {item_id, price, available, name, image}[]
@@ -82,7 +84,8 @@ export async function POST(req: NextRequest) {
       name: textChanged
         ? encodeText(
             ("name" in u ? u.name : prevText.name) ?? "",
-            ("ingredients" in u ? u.ingredients : prevText.ingredients) ?? ""
+            ("ingredients" in u ? u.ingredients : prevText.ingredients) ?? "",
+            ("deleted" in u ? u.deleted === true : prevText.deleted)
           )
         : prev.name ?? null,
       image: "image" in u ? u.image : prev.image ?? null,

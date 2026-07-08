@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo, useRef } from "react"
-import { menuItems, menuCategories, type MenuItem } from "@/data/menu"
+import { menuItems, menuCategories, type MenuCategory, type MenuItem } from "@/data/menu"
 import { formatPrice } from "@/lib/formatPrice"
 
 const ACCENT = "#1B5C38"
@@ -98,21 +98,23 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
 // ─── Item row ──────────────────────────────────────────────────────────────────
 
-type Override = { price?: number; available?: boolean; name?: string; ingredients?: string; image?: string }
+type Override = { price?: number; available?: boolean; name?: string; ingredients?: string; deleted?: boolean; image?: string }
 type CustomMenuItem = MenuItem & { created_at?: string }
+type CustomCategory = MenuCategory
 
 function displayText(name: string | null) {
-  if (!name) return { name: "", ingredients: "", structured: false }
+  if (!name) return { name: "", ingredients: "", deleted: false, structured: false }
 
   try {
-    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown }
+    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown; deleted?: unknown }
     return {
       name: typeof parsed.name === "string" ? parsed.name : name,
       ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      deleted: parsed.deleted === true,
       structured: true,
     }
   } catch {
-    return { name, ingredients: "", structured: false }
+    return { name, ingredients: "", deleted: false, structured: false }
   }
 }
 
@@ -123,6 +125,7 @@ function ItemRow({
   onChange,
   onUploadImage,
   onRemoveImage,
+  onDelete,
   imageBusy,
   imageSaved,
 }: {
@@ -132,6 +135,7 @@ function ItemRow({
   onChange: (id: string, field: "price" | "available" | "name" | "ingredients", value: number | boolean | string) => void
   onUploadImage: (id: string, file: File) => void
   onRemoveImage: (id: string) => void
+  onDelete: (item: MenuItem & { currentName: string; currentIngredients: string; currentPrice: number; currentImage?: string }) => void
   imageBusy: boolean
   imageSaved: boolean
 }) {
@@ -289,6 +293,20 @@ function ItemRow({
             {imageSaved ? "✓ حذف شد" : "حذف عکس"}
           </button>
         )}
+        <button
+          onClick={() => onDelete({
+            ...item,
+            currentName,
+            currentIngredients,
+            currentPrice,
+            ...(effectiveImage ? { currentImage: effectiveImage } : {}),
+          })}
+          disabled={imageBusy}
+          className="mr-auto px-3 py-1.5 rounded-lg text-[11px] font-semibold disabled:opacity-40 transition-all"
+          style={{ background: "#7F1D1D", color: "white" }}
+        >
+          حذف برای همیشه
+        </button>
       </div>
     </div>
   )
@@ -304,18 +322,23 @@ function AdminPanel({ password }: { password: string }) {
   const [activeCategory, setActiveCategory] = useState("all")
   const [query, setQuery] = useState("")
   const [showAddItem, setShowAddItem] = useState(false)
+  const [showAddCategory, setShowAddCategory] = useState(false)
   const [newItem, setNewItem] = useState({ category: "sushi", name: "", ingredients: "", price: "" })
+  const [newCategory, setNewCategory] = useState("")
   const [customItems, setCustomItems] = useState<MenuItem[]>([])
+  const [customCategories, setCustomCategories] = useState<CustomCategory[]>([])
   const [imageBusyId, setImageBusyId] = useState<string | null>(null)
   const [imageSavedId, setImageSavedId] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
       fetch("/api/admin/soshi/items").then((r) => r.json()).catch(() => []),
+      fetch("/api/admin/soshi/categories").then((r) => r.json()).catch(() => []),
       fetch("/api/admin/soshi/prices").then((r) => r.json()).catch(() => []),
     ])
-      .then(([itemRows, overrideRows]: [
+      .then(([itemRows, categoryRows, overrideRows]: [
         CustomMenuItem[],
+        CustomCategory[],
         {
         item_id: string; price: number | null; available: boolean | null
         name: string | null; image: string | null
@@ -332,6 +355,13 @@ function AdminPanel({ password }: { password: string }) {
             ...(item.image ? { image: item.image } : {}),
           })))
         }
+        if (Array.isArray(categoryRows)) {
+          setCustomCategories(categoryRows.map((cat) => ({
+            id: cat.id,
+            name: cat.name,
+            ...(cat.image ? { image: cat.image } : {}),
+          })))
+        }
         if (!Array.isArray(overrideRows)) return
         const map: Record<string, Override> = {}
         overrideRows.forEach(({ item_id, price, available, name, image }) => {
@@ -341,6 +371,7 @@ function AdminPanel({ password }: { password: string }) {
             ...(available !== null ? { available } : {}),
             ...(decoded.name ? { name: decoded.name } : {}),
             ...(decoded.structured ? { ingredients: decoded.ingredients } : {}),
+            ...(decoded.deleted ? { deleted: true } : {}),
             ...(image !== null ? { image } : {}), // "" = removed photo
           }
         })
@@ -350,6 +381,7 @@ function AdminPanel({ password }: { password: string }) {
   }, [])
 
   const allMenuItems = useMemo(() => [...menuItems, ...customItems], [customItems])
+  const allCategories = useMemo(() => [...menuCategories, ...customCategories], [customCategories])
 
   function handleChange(id: string, field: "price" | "available" | "name" | "ingredients", value: number | boolean | string) {
     setPending((p) => ({ ...p, [id]: { ...p[id], [field]: value } }))
@@ -402,6 +434,61 @@ function AdminPanel({ password }: { password: string }) {
       alert("خطا در حذف عکس.")
     } finally {
       setImageBusyId(null)
+    }
+  }
+
+  async function handleDeleteItem(item: MenuItem & { currentName: string; currentIngredients: string; currentPrice: number; currentImage?: string }) {
+    if (!confirm(`آیتم «${item.currentName}» برای همیشه حذف شود؟`)) return
+
+    const res = await fetch("/api/admin/soshi/items", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password,
+        id: item.id,
+        name: item.currentName,
+        ingredients: item.currentIngredients,
+        price: item.currentPrice,
+        image: item.currentImage ?? null,
+      }),
+    })
+
+    if (res.ok) {
+      setCustomItems((items) => items.filter((i) => i.id !== item.id))
+      setPending((items) => {
+        const next = { ...items }
+        delete next[item.id]
+        return next
+      })
+      setOverrides((items) => ({ ...items, [item.id]: { ...items[item.id], deleted: true } }))
+    } else {
+      const data = await res.json().catch(() => null)
+      alert(data?.error ? `خطا در حذف آیتم:\n${data.error}` : "خطا در حذف آیتم")
+    }
+  }
+
+  async function handleAddCategory(e: React.FormEvent) {
+    e.preventDefault()
+    const name = newCategory.trim()
+    if (!name) return
+
+    const res = await fetch("/api/admin/soshi/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password, name }),
+    })
+
+    if (res.ok) {
+      const category = await res.json().catch(() => null)
+      if (category?.id && category?.name) {
+        setCustomCategories((categories) => [...categories, { id: category.id, name: category.name }])
+        setNewItem((item) => ({ ...item, category: category.id }))
+      }
+      setNewCategory("")
+      setShowAddCategory(false)
+    } else {
+      const data = await res.json().catch(() => null)
+      alert(data?.error ? `خطا در افزودن دسته:\n${data.error}` : "خطا در افزودن دسته")
     }
   }
 
@@ -476,9 +563,10 @@ function AdminPanel({ password }: { password: string }) {
   }
 
   const activeItems = useMemo(() => {
+    const visibleItems = allMenuItems.filter((i) => !overrides[i.id]?.deleted)
     const byCat = activeCategory === "all"
-      ? allMenuItems
-      : allMenuItems.filter((i) => i.category === activeCategory)
+      ? visibleItems
+      : visibleItems.filter((i) => i.category === activeCategory)
     if (!query.trim()) return byCat
     const q = query.trim().toLowerCase()
     return byCat.filter((i) => {
@@ -489,13 +577,14 @@ function AdminPanel({ password }: { password: string }) {
 
   const dirtyCount = Object.keys(pending).length
   const unavailableCount = allMenuItems.filter((i) => {
+    if (overrides[i.id]?.deleted) return false
     const o = { ...overrides[i.id], ...pending[i.id] }
     return o.available === false
   }).length
 
   const activeCategories = useMemo(
-    () => menuCategories.filter((c) => allMenuItems.some((i) => i.category === c.id)),
-    [allMenuItems]
+    () => allCategories.filter((c) => allMenuItems.some((i) => i.category === c.id && !overrides[i.id]?.deleted)),
+    [allCategories, allMenuItems, overrides]
   )
 
   return (
@@ -511,6 +600,13 @@ function AdminPanel({ password }: { password: string }) {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowAddCategory(true)}
+            className="px-3 py-1.5 rounded-lg text-xs font-bold"
+            style={{ backgroundColor: ACCENT_LIGHT, color: ACCENT }}
+          >
+            + دسته جدید
+          </button>
           <button
             onClick={() => setShowAddItem(true)}
             className="px-3 py-1.5 rounded-lg text-xs font-bold text-white"
@@ -544,11 +640,12 @@ function AdminPanel({ password }: { password: string }) {
               color: activeCategory === "all" ? "white" : "#1B5C38",
             }}
           >
-            همه ({allMenuItems.length})
+            همه ({allMenuItems.filter((i) => !overrides[i.id]?.deleted).length})
           </button>
           {activeCategories.map((cat) => {
-            const count = allMenuItems.filter((i) => i.category === cat.id).length
+            const count = allMenuItems.filter((i) => i.category === cat.id && !overrides[i.id]?.deleted).length
             const unavail = allMenuItems.filter((i) => {
+              if (overrides[i.id]?.deleted) return false
               if (i.category !== cat.id) return false
               const o = { ...overrides[i.id], ...pending[i.id] }
               return o.available === false
@@ -595,6 +692,7 @@ function AdminPanel({ password }: { password: string }) {
               onChange={handleChange}
               onUploadImage={handleUploadImage}
               onRemoveImage={handleRemoveImage}
+              onDelete={handleDeleteItem}
               imageBusy={imageBusyId === item.id}
               imageSaved={imageSavedId === item.id}
             />
@@ -615,6 +713,42 @@ function AdminPanel({ password }: { password: string }) {
         </div>
       )}
 
+      {showAddCategory && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full" dir="rtl">
+            <h2 className="text-lg font-bold mb-4 text-[#121613]">دسته جدید</h2>
+            <form onSubmit={handleAddCategory} className="flex flex-col gap-3">
+              <input
+                type="text"
+                placeholder="نام دسته"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                className="px-3 py-2 rounded-lg border outline-none text-sm"
+                style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setShowAddCategory(false); setNewCategory("") }}
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold"
+                  style={{ background: ACCENT_LIGHT, color: ACCENT }}
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 rounded-lg text-sm font-semibold text-white"
+                  style={{ backgroundColor: ACCENT }}
+                >
+                  افزودن
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {showAddItem && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full" dir="rtl">
@@ -626,7 +760,7 @@ function AdminPanel({ password }: { password: string }) {
                 className="px-3 py-2 rounded-lg border outline-none text-sm"
                 style={{ borderColor: ACCENT_LIGHT, color: "#121613" }}
               >
-                {menuCategories.map(cat => (
+                {allCategories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>

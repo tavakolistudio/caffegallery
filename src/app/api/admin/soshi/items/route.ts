@@ -12,6 +12,7 @@ const headers = {
 
 const TABLE = `${SUPABASE_URL}/rest/v1/soshi_menu_overrides`
 const CUSTOM_PREFIX = "custom__"
+const CATEGORY_PREFIX = "category__"
 
 type OverrideRow = {
   item_id: string
@@ -31,21 +32,22 @@ function categoryFromId(id: string) {
   return match?.[1] ?? "sushi"
 }
 
-function encodeName(name: string, ingredients: string) {
-  return JSON.stringify({ name, ingredients })
+function encodeName(name: string, ingredients: string, deleted = false) {
+  return JSON.stringify({ name, ingredients, deleted })
 }
 
 function decodeName(value: string | null) {
-  if (!value) return { name: "", ingredients: "" }
+  if (!value) return { name: "", ingredients: "", deleted: false }
 
   try {
-    const parsed = JSON.parse(value) as { name?: unknown; ingredients?: unknown }
+    const parsed = JSON.parse(value) as { name?: unknown; ingredients?: unknown; deleted?: unknown }
     return {
       name: typeof parsed.name === "string" ? parsed.name : value,
       ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      deleted: parsed.deleted === true,
     }
   } catch {
-    return { name: value, ingredients: "" }
+    return { name: value, ingredients: "", deleted: false }
   }
 }
 
@@ -59,6 +61,7 @@ export async function GET() {
 
   const items = (data as OverrideRow[])
     .filter((row) => row.item_id.startsWith(CUSTOM_PREFIX))
+    .filter((row) => !decodeName(row.name).deleted)
     .map((row) => {
       const decoded = decodeName(row.name)
       return {
@@ -129,12 +132,36 @@ export async function DELETE(req: NextRequest) {
   const { id } = body
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 })
 
-  const res = await fetch(`${TABLE}?item_id=eq.${encodeURIComponent(id)}`, {
-    method: "DELETE",
-    headers,
+  if (String(id).startsWith(CUSTOM_PREFIX) || String(id).startsWith(CATEGORY_PREFIX)) {
+    const res = await fetch(`${TABLE}?item_id=eq.${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers,
+    })
+
+    return res.ok
+      ? NextResponse.json({ ok: true })
+      : NextResponse.json({ error: "Delete failed" }, { status: 500 })
+  }
+
+  const name = String(body.name ?? "")
+  const ingredients = String(body.ingredients ?? "")
+  const price = Number.isFinite(Number(body.price)) ? Number(body.price) : null
+  const image = typeof body.image === "string" ? body.image : null
+  const row = {
+    item_id: String(id),
+    price,
+    available: false,
+    name: encodeName(name, ingredients, true),
+    image,
+  }
+
+  const res = await fetch(TABLE, {
+    method: "POST",
+    headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify(row),
   })
 
   return res.ok
     ? NextResponse.json({ ok: true })
-    : NextResponse.json({ error: "Delete failed" }, { status: 500 })
+    : NextResponse.json({ error: await res.text() }, { status: res.status || 500 })
 }

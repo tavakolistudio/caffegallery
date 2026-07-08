@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useCart } from "@/components/menu/CartProvider"
 import { menuItems as staticItems, menuCategories } from "@/data/menu"
-import type { MenuItem } from "@/data/menu"
+import type { MenuCategory, MenuItem } from "@/data/menu"
 import MenuCard from "@/components/menu/MenuCard"
 import CartDrawer from "@/components/menu/CartDrawer"
 import CheckoutForm from "@/components/menu/CheckoutForm"
@@ -24,19 +24,22 @@ type CustomMenuItem = {
   available?: boolean | null
   image?: string | null
 }
+type CustomCategory = MenuCategory
+type SoshiMenuItem = MenuItem & { deleted?: boolean }
 
 function displayText(name: string | null) {
-  if (!name) return { name: "", ingredients: "", structured: false }
+  if (!name) return { name: "", ingredients: "", deleted: false, structured: false }
 
   try {
-    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown }
+    const parsed = JSON.parse(name) as { name?: unknown; ingredients?: unknown; deleted?: unknown }
     return {
       name: typeof parsed.name === "string" ? parsed.name : name,
       ingredients: typeof parsed.ingredients === "string" ? parsed.ingredients : "",
+      deleted: parsed.deleted === true,
       structured: true,
     }
   } catch {
-    return { name, ingredients: "", structured: false }
+    return { name, ingredients: "", deleted: false, structured: false }
   }
 }
 
@@ -44,16 +47,19 @@ export default function SoshiMenuPage() {
   const { view, setView, totalItems, totalPrice } = useCart()
   const [screen, setScreen] = useState<Screen>("home")
   const [search, setSearch] = useState("")
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(staticItems)
+  const [menuItems, setMenuItems] = useState<SoshiMenuItem[]>(staticItems)
+  const [categories, setCategories] = useState<MenuCategory[]>(menuCategories)
 
   // Fetch custom items plus live price / availability / name / image overrides
   useEffect(() => {
     Promise.all([
       fetch("/api/admin/soshi/items").then((r) => r.json()).catch(() => []),
+      fetch("/api/admin/soshi/categories").then((r) => r.json()).catch(() => []),
       fetch("/api/admin/soshi/prices").then((r) => r.json()).catch(() => []),
     ])
-      .then(([customRows, overrideRows]: [
+      .then(([customRows, categoryRows, overrideRows]: [
         CustomMenuItem[],
+        CustomCategory[],
         {
         item_id: string
         price: number | null
@@ -62,7 +68,10 @@ export default function SoshiMenuPage() {
         image: string | null
       }[]
       ]) => {
-        const customItems: MenuItem[] = Array.isArray(customRows)
+        const customCategories = Array.isArray(categoryRows) ? categoryRows : []
+        setCategories([...menuCategories, ...customCategories])
+
+        const customItems: SoshiMenuItem[] = Array.isArray(customRows)
           ? customRows.map((item) => ({
               id: item.id,
               category: item.category,
@@ -87,6 +96,7 @@ export default function SoshiMenuPage() {
             ...(available !== null ? { available } : {}),
             ...(decoded.name ? { name: decoded.name } : {}),
             ...(decoded.structured ? { ingredients: decoded.ingredients } : {}),
+            ...(decoded.deleted ? { deleted: true } : {}),
             // "" = admin explicitly removed the photo; a URL = custom photo
             ...(image !== null ? { image: image || undefined } : {}),
           }
@@ -99,20 +109,20 @@ export default function SoshiMenuPage() {
   }, [])
 
   const isSearching = search.trim().length > 0
-  const activeCategory = menuCategories.find(c => c.id === screen)
+  const activeCategory = categories.find(c => c.id === screen)
 
   const categoryItemCounts = useMemo(() => {
     const counts: Record<string, number> = {}
-    menuCategories.forEach(cat => {
-      counts[cat.id] = menuItems.filter(i => i.category === cat.id && i.available).length
+    categories.forEach(cat => {
+      counts[cat.id] = menuItems.filter(i => i.category === cat.id && i.available && !i.deleted).length
     })
     return counts
-  }, [menuItems])
+  }, [categories, menuItems])
 
   // only categories that have at least one item
   const activeCategories = useMemo(
-    () => menuCategories.filter(cat => categoryItemCounts[cat.id] > 0),
-    [categoryItemCounts],
+    () => categories.filter(cat => categoryItemCounts[cat.id] > 0),
+    [categories, categoryItemCounts],
   )
 
   const filtered = useMemo(() => {
@@ -120,11 +130,12 @@ export default function SoshiMenuPage() {
       const q = search.trim().toLowerCase()
       return menuItems.filter(
         i =>
+          !i.deleted &&
           i.name.toLowerCase().includes(q) ||
-          i.ingredients.toLowerCase().includes(q),
+          (!i.deleted && i.ingredients.toLowerCase().includes(q)),
       )
     }
-    if (screen !== "home") return menuItems.filter(i => i.category === screen)
+    if (screen !== "home") return menuItems.filter(i => i.category === screen && !i.deleted)
     return []
   }, [search, screen, isSearching, menuItems])
 
