@@ -108,6 +108,7 @@ function ItemRow({
   onUploadImage,
   onRemoveImage,
   imageBusy,
+  imageSaved,
 }: {
   item: MenuItem
   override: Override
@@ -116,6 +117,7 @@ function ItemRow({
   onUploadImage: (id: string, file: File) => void
   onRemoveImage: (id: string) => void
   imageBusy: boolean
+  imageSaved: boolean
 }) {
   const merged = { ...override, ...pending }
   const currentPrice = merged.price ?? item.price
@@ -234,19 +236,19 @@ function ItemRow({
         <button
           onClick={() => fileRef.current?.click()}
           disabled={imageBusy}
-          className="px-3 py-1.5 rounded-lg text-[11px] font-semibold disabled:opacity-40"
-          style={{ background: ACCENT_LIGHT, color: ACCENT }}
+          className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold disabled:opacity-40 transition-all ${imageSaved ? "bg-emerald-100 text-emerald-700" : ""}`}
+          style={!imageSaved ? { background: ACCENT_LIGHT, color: ACCENT } : undefined}
         >
-          {effectiveImage ? "تغییر عکس" : "افزودن عکس"}
+          {imageSaved ? "✓ ذخیره شد" : (effectiveImage ? "تغییر عکس" : "افزودن عکس")}
         </button>
         {effectiveImage && (
           <button
             onClick={() => onRemoveImage(item.id)}
             disabled={imageBusy}
-            className="px-3 py-1.5 rounded-lg text-[11px] font-semibold disabled:opacity-40"
-            style={{ background: "#FEF2F2", color: "#DC2626" }}
+            className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold disabled:opacity-40 transition-all ${imageSaved ? "bg-red-100 text-red-900" : ""}`}
+            style={!imageSaved ? { background: "#FEF2F2", color: "#DC2626" } : undefined}
           >
-            حذف عکس
+            {imageSaved ? "✓ حذف شد" : "حذف عکس"}
           </button>
         )}
       </div>
@@ -264,6 +266,7 @@ function AdminPanel({ password }: { password: string }) {
   const [activeCategory, setActiveCategory] = useState("all")
   const [query, setQuery] = useState("")
   const [imageBusyId, setImageBusyId] = useState<string | null>(null)
+  const [imageSavedId, setImageSavedId] = useState<string | null>(null)
 
   useEffect(() => {
     fetch("/api/admin/soshi/prices")
@@ -317,6 +320,8 @@ function AdminPanel({ password }: { password: string }) {
       const { url } = await up.json()
       const ok = await persistImage(id, url)
       if (!ok) throw new Error("save")
+      setImageSavedId(id)
+      setTimeout(() => setImageSavedId(null), 2500)
     } catch {
       alert("خطا در آپلود عکس. دوباره تلاش کنید.")
     } finally {
@@ -327,8 +332,10 @@ function AdminPanel({ password }: { password: string }) {
   async function handleRemoveImage(id: string) {
     setImageBusyId(id)
     try {
-      const ok = await persistImage(id, "") // "" = explicitly no photo
+      const ok = await persistImage(id, "")
       if (!ok) throw new Error("save")
+      setImageSavedId(id)
+      setTimeout(() => setImageSavedId(null), 2500)
     } catch {
       alert("خطا در حذف عکس.")
     } finally {
@@ -471,6 +478,7 @@ function AdminPanel({ password }: { password: string }) {
               onUploadImage={handleUploadImage}
               onRemoveImage={handleRemoveImage}
               imageBusy={imageBusyId === item.id}
+              imageSaved={imageSavedId === item.id}
             />
           ))}
         </div>
